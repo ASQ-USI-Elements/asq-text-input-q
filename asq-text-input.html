@@ -1,0 +1,58 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../asq-element-conf/asq-element-conf.html">
+
+<polymer-element name="asq-text-input" attributes="type value placeholder">
+  <template>
+    <div class="asq-text-input">
+      <label for="input"><content></content></label>
+      <input type="{{type}}" name="input" value="{{value}}" placeholder="{{placeholder}}">
+    </div>
+  </template>
+
+  <script>
+    (function() {
+    
+      var p = {
+
+        correctAnswer: "",
+
+        // this is a question that are submittable
+        isQuestion_: true,
+        type_: "asq-text-input",
+
+        answer: "",
+
+        created: function  () {
+          if ( this.attributes.hasOwnProperty("correctAnswer") ) {
+            this.answer = this.attributes["correctAnswer"].value;
+            this.removeAttribute("correctanswer");
+            // this.attributes["correctanswer"].value = "heh";
+          } 
+        },
+
+        getSubmission: function() {
+          if ( this.role !== this.Roles.VIEWER ) {
+            return;
+          }
+
+          if ( typeof this.value == 'undefined' ) {
+            this.value = "";
+          }
+
+          submisstion = this.value.replace(/[\s]+/g, " ").trim();
+          
+          return {
+            questionId: "",
+            timestamp: new Date(),
+            submisstion: submisstion
+          };
+        }
+      
+      }
+      ASQ.mixin(p, ASQ.ElementType);
+      ASQ.mixin(p, ASQ.Role);
+
+      Polymer('asq-text-input', p);
+    })();
+  </script>
+</polymer-element>
