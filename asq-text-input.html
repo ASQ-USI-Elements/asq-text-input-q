@@ -1,5 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../asq-element-conf/asq-element-conf.html">
+<link rel="import" href="../asq-element-common/asq-element-common.html">
 
 <polymer-element name="asq-text-input" attributes="type value placeholder">
   <template>
@@ -46,9 +46,9 @@
         }
       
       }
-      Polymer.mixin2(p, ASQ.ElementTypeMixin);
-      Polymer.mixin2(p, ASQ.RoleMixin);
-      Polymer.mixin2(p, ASQ.QuestionTypeMixin);
+      ASQ.mixin2(p, ASQ.ElementTypeMixin);
+      ASQ.mixin2(p, ASQ.RoleMixin);
+      ASQ.mixin2(p, ASQ.QuestionTypeMixin);
       Polymer('asq-text-input', p);
     })();
   </script>
