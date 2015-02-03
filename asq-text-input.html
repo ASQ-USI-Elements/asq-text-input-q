@@ -1,11 +1,12 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../asq-element-common/asq-element-common.html">
 
 <polymer-element name="asq-text-input" attributes="type value placeholder">
   <template>
     <div class="asq-text-input">
-      <label for="input"><content></content></label>
-      <input type="{{type}}" name="input" value="{{value}}" placeholder="{{placeholder}}">
+      <content></content>
+      <paper-input label="{{placeholder}}" value="{{value}}"></paper-input>
     </div>
   </template>
 
