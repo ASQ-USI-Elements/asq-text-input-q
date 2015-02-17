@@ -1,6 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-input/paper-input.html">
-<link rel="import" href="../asq-element-common/asq-element-common.html">
+<link rel="import" href="../asq-base/asq-base.html">
 
 <polymer-element name="asq-text-input" attributes="type value placeholder">
   <template>
@@ -14,6 +14,7 @@
     (function() {
     
       var p = {
+        isASQQuestionTypeElement : true, 
 
         correctAnswer: "",
 
@@ -29,7 +30,7 @@
         },
 
         submit: function() {
-          if ( this.role !== this.Roles.VIEWER ) {
+          if ( this.role !== this.roles.VIEWER ) {
             return;
           }
 
@@ -47,8 +48,8 @@
         }
       
       }
-      ASQ.mixin2(p, ASQ.RoleMixin);
-      Polymer.mixin(p, ASQ.ElementTypeMixin, ASQ.QuestionTypeMixin);
+
+      ASQ.asqify(p, true);
       Polymer('asq-text-input', p);
     })();
   </script>
