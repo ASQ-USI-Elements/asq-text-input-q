@@ -2,11 +2,24 @@
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../asq-base/asq-base.html">
 
-<polymer-element name="asq-text-input" attributes="type value placeholder">
+
+<!--
+`asq-text-input` is a styled single-line input field. It wraps the `paper-input` element.
+
+##### Example
+    <asq-text-input placeholder="input here">An asq input element</asq-text-input>
+
+
+@element asq-text-input
+@group ASQ Elements
+@blurb Element a styled single-line input field. It wraps the `paper-input` element.
+@homepage http://github.com/ASQ_USI/asq-option
+-->
+<polymer-element name="asq-text-input" attributes="value label floatingLabel">
   <template>
     <div class="asq-text-input">
       <content></content>
-      <paper-input label="{{placeholder}}" value="{{value}}"></paper-input>
+      <paper-input label="{{label}}" floatingLabel="{{floatingLabel}}" value="{{value}}"></paper-input>
     </div>
   </template>
 
@@ -14,21 +27,38 @@
     (function() {
     
       var p = {
+        /**
+         * FROM POLYMER DOCUMENTATION
+         * The placeholder for this input. It normally appears as grey text inside
+         * the text input and disappears once the user enters text.
+         *
+         * @attribute placeholder
+         * @type string
+         * @default ''
+         */
+        placeholder: '',
+
+        // Overwrite defalut value for all instances of `asq-text-input`, which are question type.
         isASQQuestionTypeElement : true, 
 
-        correctAnswer: "",
+        // correctAnswer: "",
 
-
-        answer: "",
+        // answer: "",
 
         created: function  () {
-          if ( this.attributes.hasOwnProperty("correctAnswer") ) {
-            this.answer = this.attributes["correctAnswer"].value;
-            this.removeAttribute("correctanswer");
-            // this.attributes["correctanswer"].value = "heh";
-          } 
+          // if ( this.attributes.hasOwnProperty("correctAnswer") ) {
+          //   this.answer = this.attributes["correctAnswer"].value;
+          //   this.removeAttribute("correctanswer");
+          //   // this.attributes["correctanswer"].value = "heh";
+          // } 
         },
 
+        /**
+         * The `submit` method will submit the answer to a wrapped 'asq-exercise' instance.
+         * Only useful when the `role` is `viewer`.
+         * 
+         * @method submit
+         */
         submit: function() {
           if ( this.role !== this.roles.VIEWER ) {
             return;
