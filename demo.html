@@ -10,20 +10,8 @@
   <link href="asq-text-input.html" rel="import">
 
   <style shim-shadowdom>
-    body {
-      font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
-      font-size: 14px;
-      margin: 0;
-      padding: 24px;
-      -webkit-tap-highlight-color: rgba(0,0,0,0);
-      -webkit-touch-callout: none;
-    }
-    section {
-      padding: 20px 0;
-    }
-    section > div {
-      padding: 14px;
-      font-size: 16px;
+    body{
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
   </style>
 
@@ -34,8 +22,11 @@
 
   <section>
 
-    <asq-text-input value="{{value}}" placeholder="">An asq input element</asq-text-input>
-    <p>value: {{value}} </p>
+    <asq-text-input  label="answer here">
+    An asq input element
+    <asq-solution>x</asq-solution>
+  </asq-text-input>
+
 
     <br>
     

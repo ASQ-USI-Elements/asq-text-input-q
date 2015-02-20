@@ -7,7 +7,7 @@
 `asq-text-input` is a styled single-line input field. It wraps the `paper-input` element.
 
 ##### Example
-    <asq-text-input placeholder="input here">An asq input element</asq-text-input>
+    <asq-text-input label="input here">An asq input element</asq-text-input>
 
 
 @element asq-text-input
@@ -16,7 +16,11 @@
 @homepage http://github.com/ASQ_USI/asq-option
 -->
 <polymer-element name="asq-text-input" attributes="value label floatingLabel">
+
   <template>
+    <style>
+      ::content asq-solution {display: none};
+    </style>
     <div class="asq-text-input">
       <content></content>
       <paper-input label="{{label}}" floatingLabel="{{floatingLabel}}" value="{{value}}"></paper-input>
@@ -29,14 +33,14 @@
       var p = {
         /**
          * FROM POLYMER DOCUMENTATION
-         * The placeholder for this input. It normally appears as grey text inside
+         * The label for this input. It normally appears as grey text inside
          * the text input and disappears once the user enters text.
          *
-         * @attribute placeholder
+         * @attribute label
          * @type string
          * @default ''
          */
-        placeholder: '',
+        label: '',
 
         // Overwrite defalut value for all instances of `asq-text-input`, which are question type.
         isASQQuestionTypeElement : true, 
