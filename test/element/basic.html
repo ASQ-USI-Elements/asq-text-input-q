@@ -5,23 +5,23 @@
   <meta name="asq" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
   <title>asq-multi-choice</title>
 
-  <script src="../../webcomponentsjs/webcomponents.min.js"></script>
-  <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../../webcomponentsjs/webcomponents.min.js"></script>
+  <script src="../../../web-component-tester/browser.js"></script>
 
   <!-- Step 1: import the element to test -->
-  <link rel="import" href="../asq-text-input.html">
-  <link rel="import" href="../../asq-base/asq-base.html">
+  <link rel="import" href="../../asq-text-input.html">
+  <link rel="import" href="../../../asq-base/asq-base.html">
 </head>
 <body>
 
   <!-- You use the document as a place to set up your fixtures. -->
-  <asq-text-input id="m" placeholder="">An asq input element</asq-text-input>
+  <asq-text-input id="m" label="">An asq input element</asq-text-input>
 
   <script>
     var m = document.querySelector('#m');
     suite('<asq-text-input>', function() {
       test('test default values', function() {
-        assert.equal(m.placeholder, "");
+        assert.equal(m.label, "");
       });
 
       test('test default mixin values', function() {
