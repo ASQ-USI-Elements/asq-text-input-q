@@ -4,63 +4,105 @@
 
 
 <!--
-`asq-text-input` is a styled single-line input field. It wraps the `paper-input` element.
+`asq-text-input` is a styled single-line input field. It can be used for simple
+text questions. 
 
 ##### Example
-    <asq-text-input label="input here">An asq input element</asq-text-input>
+    <asq-text-input label="value">
+      <asq-stem><h5>What's value of a[3]?</h5></asq-stem>
+      <pre><code>
+        char a[27];
+        char *b = "abc";
+        strcpy(a, b);</code></pre>
+      <asq-solution hidden>\0</asq-solution>
+    </asq-text-input>
 
 
 @element asq-text-input
 @group ASQ Elements
 @blurb Element a styled single-line input field. It wraps the `paper-input` element.
-@homepage http://github.com/ASQ_USI/asq-option
+@homepage http://github.com/ASQ-USI/asq-text-input
 -->
-<polymer-element name="asq-text-input" attributes="value label floatingLabel">
+<polymer-element name="asq-text-input">
 
   <template>
     <style>
-      ::content asq-solution {display: none};
+      :host {
+        display: block;
+      }
     </style>
-    <div class="asq-text-input">
-      <content></content>
-      <paper-input label="{{label}}" floatingLabel="{{floatingLabel}}" value="{{value}}"></paper-input>
+
+    <content select="asq-stem"></content>
+
+    <content></content>
+
+    <div>
+      <paper-input label="{{label}}" floatingLabel="{{floatingLabel}}" 
+          value="{{value}}" disabled="{{disabled}}"></paper-input>
     </div>
+
   </template>
 
   <script>
     (function() {
     
       var p = {
-        /**
-         * FROM POLYMER DOCUMENTATION
-         * The label for this input. It normally appears as grey text inside
-         * the text input and disappears once the user enters text.
-         *
-         * @attribute label
-         * @type string
-         * @default ''
-         */
-        label: '',
+
+        publish: {
+
+          /**
+           * The label for this input. It normally appears as grey text inside
+           * the text input and disappears once the user enters text.
+           *
+           * @attribute label
+           * @type string
+           * @default ''
+           */
+          label: '',
+
+          /**
+           * If true, the label will "float" above the text input once the
+           * user enters text instead of disappearing.
+           *
+           * @attribute floatingLabel
+           * @type boolean
+           * @default false
+           */
+          floatingLabel: false,
+
+          /**
+           * Set to true to style the element as disabled.
+           *
+           * @attribute disabled
+           * @type boolean
+           * @default false
+           */
+          disabled: {value: false, reflect: true},
+
+          /**
+           * The current value of the input.
+           * 
+           * @attribute value
+           * @type String
+           * @default ''
+           */
+          value: '',
+        },
+
 
         // Overwrite defalut value for all instances of `asq-text-input`, which are question type.
         isASQQuestionTypeElement : true, 
 
-        // correctAnswer: "",
-
-        // answer: "",
-
-        created: function  () {
-          // if ( this.attributes.hasOwnProperty("correctAnswer") ) {
-          //   this.answer = this.attributes["correctAnswer"].value;
-          //   this.removeAttribute("correctanswer");
-          //   // this.attributes["correctanswer"].value = "heh";
-          // } 
-        },
-
         /**
-         * The `submit` method will submit the answer to a wrapped 'asq-exercise' instance.
-         * Only useful when the `role` is `viewer`.
-         * 
+         * The `submit` method returns an object called *detail* that respresents the submission of this question. The *detail* object has the following structure:
+
+             {
+                questionUid: this.uid,
+                timestamp: new Date(),
+                submission: submission
+             }
+         * Only enabled when the `role` of the element is <b>viewer</b>.
+         *
          * @method submit
          */
         submit: function() {
@@ -68,14 +110,14 @@
             return;
           }
 
-          if ( typeof this.value == 'undefined' ) {
+          if ( ! this.value ) {
             this.value = "";
           }
 
           submission = this.value.replace(/[\s]+/g, " ").trim();
           
           return {
-
+            questionUid: this.uid,
             timestamp: new Date(),
             submission: submission
           };
