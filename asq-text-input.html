@@ -93,6 +93,43 @@ text questions.
         // Overwrite defalut value for all instances of `asq-text-input`, which are question type.
         isASQQuestionTypeElement : true, 
 
+        created: function(){
+          document.addEventListener('asq-ready', function(evt){
+            try {
+              this.subscribeToEvents(evt.detail.asqEventBus)
+            } catch(err){
+              console.debug('failed to subscribeToEvents');
+            }
+          }.bind(this));
+        },
+
+        onQuestionType: function(evt){
+          if(!evt || ! evt.questionType) return;
+
+          if(evt.questionType == 'asq-text-input'){
+            if(evt.type == "restorePresenter"){
+              if(this.role !== this.roles.PRESENTER) return;
+              this.onRestorePresenter(evt);
+            }
+            else if(evt.type == "restoreViewer"){
+              if(this.role !== this.roles.VIEWER) return;
+              this.onRestoreViewer(evt);
+            }
+          }
+        },
+
+        onRestorePresenter: function(evt){
+          console.log('TT', "onRestorePresenter");
+        },
+
+        onRestoreViewer: function(evt){
+          console.log('TT', "onRestoreViewer");
+        },
+
+        subscribeToEvents: function(eventBus){
+          eventBus.on('asq:question_type', this.onQuestionType.bind(this));
+        },
+
         /**
          * The `submit` method returns an object called *detail* that respresents the submission of this question. The *detail* object has the following structure:
 
