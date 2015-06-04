@@ -1,7 +1,7 @@
 {
   "name": "asq-text-input",
   "version": "0.0.0",
-  "description": "ASQ Highlight question type element",
+  "description": "ASQ text input question type element",
   "main": "index.js",
   "repository": {
     "type": "git",
