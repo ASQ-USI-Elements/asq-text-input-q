@@ -119,11 +119,15 @@ text questions.
         },
 
         onRestorePresenter: function(evt){
-          console.log('TT', "onRestorePresenter");
+
         },
 
         onRestoreViewer: function(evt){
-          console.log('TT', "onRestoreViewer");
+          evt.questions.forEach(function(q){
+            console.log(q)
+            if(q.uid != this.uid) return;
+            this.value = q.value;
+          }.bind(this));
         },
 
         subscribeToEvents: function(eventBus){
