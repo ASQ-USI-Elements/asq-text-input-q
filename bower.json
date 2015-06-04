@@ -15,6 +15,7 @@
     "polymer": "Polymer/polymer#^0.5.1",
     "asq-base": "ASQ-USI/asq-base#master"
   },
+  "ignore": [ "index.js", "lib", "package.json", "node_modules"],
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^2.0.0-rc1"
   }
