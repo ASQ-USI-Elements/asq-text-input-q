@@ -13,8 +13,9 @@
   "license": "MIT",
   "dependencies": {
     "polymer": "Polymer/polymer#^0.5.1",
-    "asq-base": "ASQ-USI/asq-base#master",
     "paper-input": "Polymer/paper-input#^0.5.2",
+    "asq-base": "ASQ-USI-Elements/asq-base#master"
+    
   },
   "ignore": [ "index.js", "lib", "package.json", "node_modules", ".npmignore", "test/server"],
   "devDependencies": {
