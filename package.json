@@ -1,11 +1,11 @@
 {
-  "name": "asq-text-input",
-  "version": "0.0.0",
+  "name": "asq-text-input-q",
+  "version": "0.1.0",
   "description": "ASQ text input question type element",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ASQ-USI/asq-text-input"
+    "url": "https://github.com/ASQ-USI-Elements/asq-text-input-q"
   },
   "dependencies": {
     "asq-plugin": "ASQ-USI/asq-plugin",
@@ -13,6 +13,9 @@
     "cheerio": "^0.18.0",
     "lodash": "^3.2.0",
     "mongoose": "^4.0.5"
+  },
+  "bugs": {
+    "url": "https://github.com/ASQ-USI-Elements/asq-text-input-q/issues"
   },
   "devDependencies": {
     "chai": "^2.0.0",

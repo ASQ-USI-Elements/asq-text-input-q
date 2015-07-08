@@ -9,17 +9,17 @@
   <script src="../../../web-component-tester/browser.js"></script>
 
   <!-- Step 1: import the element to test -->
-  <link rel="import" href="../../asq-text-input.html">
+  <link rel="import" href="../../asq-text-input-q.html">
   <link rel="import" href="../../../asq-base/asq-base.html">
 </head>
 <body>
 
   <!-- You use the document as a place to set up your fixtures. -->
-  <asq-text-input id="m" label="">An asq input element</asq-text-input>
+  <asq-text-input-q id="m" label="">An asq input element</asq-text-input-q>
 
   <script>
     var m = document.querySelector('#m');
-    suite('<asq-text-input>', function() {
+    suite('<asq-text-input-q>', function() {
       test('test default values', function() {
         assert.equal(m.label, "");
       });

@@ -4,26 +4,26 @@
 
 
 <!--
-`asq-text-input` is a styled single-line input field. It can be used for simple
+`asq-text-input-q` is a styled single-line input field. It can be used for simple
 text questions. 
 
 ##### Example
-    <asq-text-input label="value">
+    <asq-text-input-q label="value">
       <asq-stem><h5>What's value of a[3]?</h5></asq-stem>
       <pre><code>
         char a[27];
         char *b = "abc";
         strcpy(a, b);</code></pre>
       <asq-solution hidden>\0</asq-solution>
-    </asq-text-input>
+    </asq-text-input-q>
 
 
-@element asq-text-input
+@element asq-text-input-q
 @group ASQ Elements
 @blurb Element a styled single-line input field. It wraps the `paper-input` element.
-@homepage http://github.com/ASQ-USI/asq-text-input
+@homepage http://github.com/ASQ-USI/asq-text-input-q
 -->
-<polymer-element name="asq-text-input">
+<polymer-element name="asq-text-input-q">
 
   <template>
     <style>
@@ -90,7 +90,7 @@ text questions.
         },
 
 
-        // Overwrite defalut value for all instances of `asq-text-input`, which are question type.
+        // Overwrite defalut value for all instances of `asq-text-input-q`, which are question type.
         isASQQuestionTypeElement : true, 
 
         created: function(){
@@ -106,7 +106,7 @@ text questions.
         onQuestionType: function(evt){
           if(!evt || ! evt.questionType) return;
 
-          if(evt.questionType == 'asq-text-input'){
+          if(evt.questionType == 'asq-text-input-q'){
             if(evt.type == "restorePresenter"){
               if(this.role !== this.roles.PRESENTER) return;
               this.onRestorePresenter(evt);
@@ -167,7 +167,7 @@ text questions.
       }
 
       ASQ.asqify(p, true);
-      Polymer('asq-text-input', p);
+      Polymer('asq-text-input-q', p);
     })();
   </script>
 </polymer-element>

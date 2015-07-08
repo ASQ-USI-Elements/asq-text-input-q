@@ -1,10 +1,10 @@
 {
-  "name": "asq-text-input",
-  "version": "0.0.0",
-  "homepage": "https://github.com/ASQ-USI/asq-text-input",
+  "name": "asq-text-input-q",
+  "version": "0.1.0",
+  "homepage": "https://github.com/ASQ-USI-Elements/asq-text-input-q",
   "authors": [
     "Vasileios Triglianos <triglian@gmail.com>",
-    "Zhenfei Nie <zhenfei.nie@gmail.com>"
+    "Zhenfei Nie <youyis2fox@gmail.com>"
   ],
   "description": "ASQ Text input question element",
   "keywords": [
@@ -13,7 +13,8 @@
   "license": "MIT",
   "dependencies": {
     "polymer": "Polymer/polymer#^0.5.1",
-    "asq-base": "ASQ-USI/asq-base#master"
+    "asq-base": "ASQ-USI/asq-base#master",
+    "paper-input": "Polymer/paper-input#^0.5.2",
   },
   "ignore": [ "index.js", "lib", "package.json", "node_modules", ".npmignore", "test/server"],
   "devDependencies": {

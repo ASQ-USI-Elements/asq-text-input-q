@@ -7,7 +7,7 @@
 
   <script src="../webcomponentsjs/webcomponents.js"></script>
 
-  <link href="asq-text-input.html" rel="import">
+  <link href="asq-text-input-q.html" rel="import">
   <link href="../asq-stem/asq-stem.html" rel="import">
 
   <style shim-shadowdom>
@@ -15,7 +15,7 @@
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
 
-    asq-text-input {
+    asq-text-input-q {
       margin-bottom: 2em;
     }
 
@@ -24,29 +24,29 @@
 </head>
 <body>
 
-  <asq-text-input label="value">
+  <asq-text-input-q label="value">
     <asq-stem><h5>What's value of a[3]?</h5></asq-stem>
     <pre><code>
       char a[27];
       char *b = "abc";
       strcpy(a, b);</code></pre>
     <asq-solution hidden>\0</asq-solution>
-  </asq-text-input>
+  </asq-text-input-q>
 
-  <asq-text-input label="line:" floatingLabel>
+  <asq-text-input-q label="line:" floatingLabel>
     <asq-stem><h5>Which line of this program is incorrect?</h5></asq-stem>
     <img src="http://upload.wikimedia.org/wikipedia/commons/3/37/Object-Oriented-Programming-Methods-And-Classes-with-Inheritance.png" width="300">
     <asq-solution hidden>17</asq-solution>
-  </asq-text-input>
+  </asq-text-input-q>
 
-  <asq-text-input label="value" disabled>
+  <asq-text-input-q label="value" disabled>
     <asq-stem><h5>A disabled question</h5></asq-stem>
     <pre><code>
       char a[27];
       char *b = "abc";
       strcpy(a, b);</code></pre>
     <asq-solution hidden>\0</asq-solution>
-  </asq-text-input>
+  </asq-text-input-q>
 
   <script>
     window.onmessage = function(e){
