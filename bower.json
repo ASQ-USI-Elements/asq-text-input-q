@@ -1,6 +1,6 @@
 {
   "name": "asq-text-input-q",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "homepage": "https://github.com/ASQ-USI-Elements/asq-text-input-q",
   "authors": [
     "Vasileios Triglianos <triglian@gmail.com>",
@@ -12,13 +12,20 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "polymer": "Polymer/polymer#^0.5.1",
-    "paper-input": "Polymer/paper-input#^0.5.2",
-    "asq-base": "ASQ-USI-Elements/asq-base#master"
-    
+    "asq-base": "ASQ-USI-Elements/asq-base#feat-polymer-1",
+    "paper-input": "PolymerElements/paper-input",
+    "polymer": "Polymer/Polymer#~1.0.8"
   },
-  "ignore": [ "index.js", "lib", "package.json", "node_modules", ".npmignore", "test/server"],
+  "ignore": [
+    "index.js",
+    "lib",
+    "package.json",
+    "node_modules",
+    ".npmignore",
+    "test/server"
+  ],
   "devDependencies": {
-    "web-component-tester": "Polymer/web-component-tester#^2.0.0-rc1"
+    "web-component-tester": "Polymer/web-component-tester#^2.0.0-rc1",
+    "iron-component-page": "PolymerElements/iron-component-page#~1.0.5"
   }
 }
