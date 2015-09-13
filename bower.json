@@ -14,7 +14,7 @@
   "dependencies": {
     "asq-base": "ASQ-USI-Elements/asq-base#feat-polymer-1",
     "paper-input": "PolymerElements/paper-input",
-    "polymer": "Polymer/Polymer#~1.0.8"
+    "polymer": "Polymer/Polymer#~1.1.0"
   },
   "ignore": [
     "index.js",
@@ -22,10 +22,11 @@
     "package.json",
     "node_modules",
     ".npmignore",
+    ".gitignore",
     "test/server"
   ],
   "devDependencies": {
-    "web-component-tester": "Polymer/web-component-tester#^2.0.0-rc1",
+    "web-component-tester": "Polymer/web-component-tester#~3.3.21",
     "iron-component-page": "PolymerElements/iron-component-page#~1.0.5"
   }
 }
