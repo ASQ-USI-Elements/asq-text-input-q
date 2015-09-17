@@ -32,16 +32,20 @@ text questions.
       :host {
         display: block;
       }
+
+      #input{
+        @apply(--asq-text-input-q-input);
+      }
+
+     
     </style>
 
     <!-- <content select="asq-stem"></content> -->
 
     <content></content>
 
-    <div>
-      <paper-input label="{{label}}" floatingLabel="{{floatingLabel}}" 
+    <paper-input id="input" label="{{label}}" floatingLabel="{{floatingLabel}}" 
           value="{{value}}" disabled="{{disabled}}"></paper-input>
-    </div>
 
   </template>
 </dom-module>

@@ -13,7 +13,11 @@
   "license": "MIT",
   "dependencies": {
     "asq-base": "ASQ-USI-Elements/asq-base#feat-polymer-1",
+    "google-chart": "GoogleWebComponents/google-chart#~1.0.2",
+    "iron-list": "polymerelements/iron-list#~1.1.1",
     "paper-input": "PolymerElements/paper-input",
+    "paper-item": "polymerelements/paper-item#~1.0.2",
+    "paper-progress": "polymerElements/paper-progress#~1.0.4",
     "polymer": "Polymer/Polymer#~1.1.0"
   },
   "ignore": [

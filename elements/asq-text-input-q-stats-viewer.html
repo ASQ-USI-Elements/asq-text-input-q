@@ -1,0 +1,185 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-list/iron-list.html">
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../paper-item/paper-item.html">
+<link rel="import" href="../../paper-progress/paper-progress.html">
+<link rel="import" href="../../asq-base/asq-base.html">
+
+<!--
+`asq-text-input-q-stats-viewer` provides the presenter view of `asq-text-input-q-stats`. 
+
+Example:
+
+    <asq-text-input-q-stats-viewer for="leId">
+    </asq-text-input-q-stats-viewer>
+
+
+@element asq-text-input-q-stats-viewer
+@demo demo/stats.html
+@group ASQ Elements
+@blurb Element provides a stats for `asq-text-input-q` elements.
+@homepage http://github.com/ASQ-USI-Elements/asq-text-input-q
+-->
+<dom-module id="asq-text-input-q-stats-viewer">
+
+  <template>
+
+    <style>
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+
+      #leList {
+        @apply(--layout-flex);
+      }
+
+      paper-item{
+        /*@apply(--layout-vertical);*/
+        padding-top: 12px;
+        background-color: white;
+        cursor: pointer;
+        @apply(--shadow-elevation-2dp);
+      }
+
+      paper-item paper-progress{
+        width: 100%;
+      }
+
+    </style>
+
+    <div id="list-container">
+      <iron-list id="leList" items="[[_tokenizedSubmissions]]" as="submission">
+        <template>
+          <paper-item>
+          <paper-item-body two-line style="width:100%">
+            <div><span>[[submission.value]]</span> <span>[[submission.frequency]]</span></div>
+            <div><paper-progress value="[[submission.percentage]]"></paper-progress></div>
+          </paper-item-body>
+          <iron-icon icon="warning"></iron-icon>
+          </paper-item>
+        </template>
+      </iron-list>
+    </div>
+  </template>
+</dom-module>
+<script>
+  (function() {
+  
+    Polymer({
+
+      is: 'asq-text-input-q-stats-viewer',
+      behaviors: [ASQ.asqElementBehavior],
+
+      properties: {
+
+        /**
+         * The id of the `asq-text-input-q` this stat is for.
+         */
+        for: {
+          type: String,
+          value: '',
+          notify: true,
+          reflectToAttribute: true
+        },
+
+        /**
+         * The uid of the `asq-text-input-q` this stat is for.
+         */
+        forUid: {
+          type: String,
+          value: '',
+          notify: true,
+          reflectToAttribute: true
+        },
+
+         /**
+         * submissions
+         */
+        _submissions: {
+          type: Array,
+          observer: "_submissionsChanged",
+          notify: true
+        },
+
+        /**
+         * Tokenized submissions with frequency and percentage.
+         */
+        _tokenizedSubmissions: {
+          type: Array,
+          notify: true
+        },
+
+        /**
+         * Event bus to communicate with ASQ.
+         */
+        eventBus: {
+          type: Object,
+          observer: "_eventBusChanged",
+          notify: true
+        }
+      },
+
+      _onQuestionType: function(evt){
+        if(!evt || ! evt.questionType) return;
+
+        if(evt.questionType == 'asq-text-input-q'){
+          if(evt.type == "progress"){
+            this._onProgress(evt);
+          }
+          else if(evt.type == "restoreViewerStats"){
+            this._onRestoreViewer(evt);
+          }
+        }
+      },
+
+      _onRestoreViewer: function(evt){
+        evt.questions.forEach(function(q){
+         if(q.uid != this.forUid) return;
+         this._submissions = q.answers.map(function(answer){
+          return answer.submission});
+        }.bind(this));
+      },
+
+      _onProgress: function (evt) {
+        if (!evt.question || evt.question.uid !== this.forUid)
+          return;
+
+        this._submissions = evt.question.answers.map(function(answer){
+          return answer.submission});
+      },
+
+      _submissionsChanged: function(submissions){
+        if(!submissions && submissions.length) return;
+        var l = submissions.length;
+
+        //token count
+        var tokenizedSubmissions = Object.create(null);
+        submissions.map(function(sub){
+          if(typeof sub !== 'string') return;
+          tokenizedSubmissions[sub] = tokenizedSubmissions[sub] || 0;
+          tokenizedSubmissions[sub]++;
+        })
+
+        // adapt to what the google chart is expecting
+        this._tokenizedSubmissions = Object.keys(tokenizedSubmissions).map(function(token){
+          return {
+            value: token,
+            frequency: tokenizedSubmissions[token],
+            percentage: parseFloat(100* tokenizedSubmissions[token]/l)
+          }
+        })
+      },
+
+      _eventBusChanged: function (eventBus, old) {
+        if(!eventBus) return;
+        eventBus.on('asq:question_type', this._onQuestionType.bind(this));
+      },
+
+      hasRole: function (role, candidate) {
+        return role == candidate;
+      }
+    
+    });
+  })();
+</script>
