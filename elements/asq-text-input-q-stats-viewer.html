@@ -46,6 +46,21 @@ Example:
         width: 100%;
       }
 
+      .submission-info{
+        @apply(--layout-horizontal);
+        @apply(--asq-text-input-q-stats-submission-info);
+      }
+
+      .submission-value{
+        @apply(--layout-flex);
+        @apply(--asq-text-input-q-stats-submission-value);
+      }
+
+      .submission-frequency{
+        @apply(--layout-flex);
+        @apply(--asq-text-input-q-stats-submission-frequency);
+      }
+
     </style>
 
     <div id="list-container">
@@ -53,7 +68,9 @@ Example:
         <template>
           <paper-item>
           <paper-item-body two-line style="width:100%">
-            <div><span>[[submission.value]]</span> <span>[[submission.frequency]]</span></div>
+            <div class="submission-info">
+              <div class="submission-value">[[submission.value]]</div> <div class="submission-frequency">(<span>[[submission.frequency]]</span>)</div>
+              </div>
             <div><paper-progress value="[[submission.percentage]]"></paper-progress></div>
           </paper-item-body>
           <!-- <iron-icon icon="warning"></iron-icon> -->
