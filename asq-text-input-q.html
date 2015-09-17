@@ -33,6 +33,10 @@ text questions.
         display: block;
       }
 
+      #le-content{
+        @apply(--asq-text-input-q-content);
+      }
+
       #input{
         @apply(--asq-text-input-q-input);
       }
@@ -41,8 +45,10 @@ text questions.
     </style>
 
     <!-- <content select="asq-stem"></content> -->
-
-    <content></content>
+    
+    <div class="le-content">
+      <content></content>
+    </div>
 
     <paper-input id="input" label="{{label}}" floatingLabel="{{floatingLabel}}" 
           value="{{value}}" disabled="{{disabled}}"></paper-input>
