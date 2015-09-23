@@ -48,6 +48,11 @@ Example:
         width: 100%;
       }
 
+      #list-container{
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+
       .submission-info{
         @apply(--layout-horizontal);
         @apply(--asq-text-input-q-stats-submission-info);
@@ -80,7 +85,7 @@ Example:
           <paper-item-body two-line style="width:100%">
             <div class="submission-info">
               <div class="submission-value">[[submission.value]]</div> 
-              <iron-icon class$="{{_calculateIronIconClass(submission.correct)}}" icon="{{_calculateIronIconIcon(submission.correct)}}" ></iron-icon>
+              <div class="submission-correctness"><iron-icon class$="[[_calculateIronIconClass(submission.correct)]]" icon="[[_calculateIronIconIcon(submission.correct)]]" ></iron-icon></div>
             </div>
           </paper-item-body>
           </paper-item>
@@ -124,7 +129,6 @@ Example:
          */
         _submissions: {
           type: Array,
-          observer: "_submissionsChanged",
           notify: true
         },
 
@@ -182,28 +186,6 @@ Example:
         }
 
         this._submissions = [submission];
-      },
-
-      _submissionsChanged: function(submissions){
-        // if(!submissions && submissions.length) return;
-        // var l = submissions.length;
-
-        // //token count
-        // var tokenizedSubmissions = Object.create(null);
-        // submissions.map(function(sub){
-        //   if(typeof sub !== 'string') return;
-        //   tokenizedSubmissions[sub] = tokenizedSubmissions[sub] || 0;
-        //   tokenizedSubmissions[sub]++;
-        // })
-
-        // // adapt to what the google chart is expecting
-        // this._tokenizedSubmissions = Object.keys(tokenizedSubmissions).map(function(token){
-        //   return {
-        //     value: token,
-        //     frequency: tokenizedSubmissions[token],
-        //     percentage: parseFloat(100* tokenizedSubmissions[token]/l)
-        //   }
-        // })
       },
 
       _eventBusChanged: function (eventBus, old) {

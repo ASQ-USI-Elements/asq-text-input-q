@@ -139,7 +139,6 @@ text questions.
 
       onRestoreViewer: function(evt){
         evt.questions.forEach(function(q){
-          console.log(q)
           if(q.uid != this.uid) return;
           this.value = q.value;
         }.bind(this));

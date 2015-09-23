@@ -30,6 +30,11 @@ Example:
         @apply(--layout-flex);
       }
 
+      #list-container{
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+
       #leList {
         @apply(--layout-flex);
       }
@@ -59,6 +64,18 @@ Example:
         @apply(--asq-text-input-q-stats-submission-frequency);
       }
 
+      .submission-correctness{
+        @apply(--asq-text-input-q-stats-submission-correctness);
+      }
+
+      iron-icon.correct{
+        color: green;
+      }
+
+      iron-icon.wrong{
+        color: red;
+      }
+
     </style>
 
     <div id="list-container">
@@ -67,11 +84,11 @@ Example:
           <paper-item>
           <paper-item-body two-line style="width:100%">
             <div class="submission-info">
-              <div class="submission-value">[[submission.value]]</div> <div class="submission-frequency">(<span>[[submission.frequency]]</span>)</div>
+              <div class="submission-value">[[submission.value]]</div>
+              <div class="submission-frequency">(<span>[[submission.frequency]]</span>)</div>              <div class="submission-correctness"><iron-icon class$="[[_calculateIronIconClass(submission.correct)]]" icon="[[_calculateIronIconIcon(submission.correct)]]" ></iron-icon></div>
               </div>
             <div><paper-progress value="[[submission.percentage]]"></paper-progress></div>
           </paper-item-body>
-<!--           <iron-icon icon="warning"></iron-icon> -->
           </paper-item>
         </template>
       </iron-list>
@@ -111,9 +128,9 @@ Example:
          /**
          * submissions
          */
-        _submissions: {
+        _answers: {
           type: Array,
-          observer: "_submissionsChanged",
+          observer: "_answersChanged",
           notify: true
         },
 
@@ -151,8 +168,7 @@ Example:
       _onRestorePresenter: function(evt){
         evt.questions.forEach(function(q){
          if(q.uid != this.forUid) return;
-         this._submissions = q.answers.map(function(answer){
-          return answer.submission});
+         this._answers = q.answers;
         }.bind(this));
       },
 
@@ -160,27 +176,31 @@ Example:
         if (!evt.question || evt.question.uid !== this.forUid)
           return;
 
-        this._submissions = evt.question.answers.map(function(answer){
-          return answer.submission});
+        this._answers = evt.question.answers;
       },
 
-      _submissionsChanged: function(submissions){
-        if(!submissions && submissions.length) return;
-        var l = submissions.length;
+      _answersChanged: function(answers){
+        if(!answers && answers.length) return;
+        var l = answers.length;
 
         //token count
         var tokenizedSubmissions = Object.create(null);
-        submissions.map(function(sub){
+        answers.map(function(answer){
+          var sub = answer.submission;
           if(typeof sub !== 'string') return;
-          tokenizedSubmissions[sub] = tokenizedSubmissions[sub] || 0;
-          tokenizedSubmissions[sub]++;
+          tokenizedSubmissions[sub] = tokenizedSubmissions[sub] || {
+            frequency: 0,
+            correct: answer.isSubmissionCorrect
+          };
+          tokenizedSubmissions[sub].frequency++;
         })
 
         // adapt to what the google chart is expecting
         this._tokenizedSubmissions = Object.keys(tokenizedSubmissions).map(function(token){
           return {
             value: token,
-            frequency: tokenizedSubmissions[token],
+            frequency: tokenizedSubmissions[token].frequency,
+            correct: tokenizedSubmissions[token].correct,
             percentage: parseFloat(100* tokenizedSubmissions[token]/l)
           }
         })
@@ -193,6 +213,24 @@ Example:
 
       hasRole: function (role, candidate) {
         return role == candidate;
+      },
+
+      _calculateIronIconClass: function(correct){
+        if(correct === true){
+         return "correct"
+        }else if(correct ===false){
+         return "wrong"
+        }
+        return "";
+      },
+
+      _calculateIronIconIcon: function(correct){
+        if(correct === true){
+          return "icons:check";
+        }else if(correct ===false){
+          return "icons:clear";
+        }
+        return "";
       }
     
     });
