@@ -1,5 +1,7 @@
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="../../iron-list/iron-list.html">
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../iron-icon/iron-icon.html">
 <link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../paper-item/paper-item.html">
 <link rel="import" href="../../paper-progress/paper-progress.html">
@@ -60,19 +62,27 @@ Example:
         @apply(--asq-text-input-q-stats-submission-frequency);
       }
 
+      iron-icon.correct{
+        color: green;
+      }
+
+      iron-icon.wrong{
+        color: red;
+      }
+
     </style>
 
+
     <div id="list-container">
-      <iron-list id="leList" items="[[_tokenizedSubmissions]]" as="submission">
+      <iron-list id="leList" items="[[_submissions]]" as="submission">
         <template>
           <paper-item>
           <paper-item-body two-line style="width:100%">
             <div class="submission-info">
-              <div class="submission-value">[[submission.value]]</div> <div class="submission-frequency">(<span>[[submission.frequency]]</span>)</div>
-              </div>
-            <div><paper-progress value="[[submission.percentage]]"></paper-progress></div>
+              <div class="submission-value">[[submission.value]]</div> 
+              <iron-icon class$="{{_calculateIronIconClass(submission.correct)}}" icon="{{_calculateIronIconIcon(submission.correct)}}" ></iron-icon>
+            </div>
           </paper-item-body>
-          <!-- <iron-icon icon="warning"></iron-icon> -->
           </paper-item>
         </template>
       </iron-list>
@@ -143,7 +153,7 @@ Example:
           if(evt.type == "progress"){
             this._onProgress(evt);
           }
-          else if(evt.type == "restoreViewerStats"){
+          else if(evt.type == "restoreViewer"){
             this._onRestoreViewer(evt);
           }
         }
@@ -152,8 +162,13 @@ Example:
       _onRestoreViewer: function(evt){
         evt.questions.forEach(function(q){
          if(q.uid != this.forUid) return;
-         this._submissions = q.answers.map(function(answer){
-          return answer.submission});
+
+         var submission = {
+           value: q.answer.submission,
+           correct: q.answer.isSubmissionCorrect
+         }
+         this._submissions = [submission];
+
         }.bind(this));
       },
 
@@ -161,30 +176,34 @@ Example:
         if (!evt.question || evt.question.uid !== this.forUid)
           return;
 
-        this._submissions = evt.question.answers.map(function(answer){
-          return answer.submission});
+        var submission = {
+          value: evt.question.answer.submission,
+          correct: evt.question.answer.isSubmissionCorrect
+        }
+
+        this._submissions = [submission];
       },
 
       _submissionsChanged: function(submissions){
-        if(!submissions && submissions.length) return;
-        var l = submissions.length;
+        // if(!submissions && submissions.length) return;
+        // var l = submissions.length;
 
-        //token count
-        var tokenizedSubmissions = Object.create(null);
-        submissions.map(function(sub){
-          if(typeof sub !== 'string') return;
-          tokenizedSubmissions[sub] = tokenizedSubmissions[sub] || 0;
-          tokenizedSubmissions[sub]++;
-        })
+        // //token count
+        // var tokenizedSubmissions = Object.create(null);
+        // submissions.map(function(sub){
+        //   if(typeof sub !== 'string') return;
+        //   tokenizedSubmissions[sub] = tokenizedSubmissions[sub] || 0;
+        //   tokenizedSubmissions[sub]++;
+        // })
 
-        // adapt to what the google chart is expecting
-        this._tokenizedSubmissions = Object.keys(tokenizedSubmissions).map(function(token){
-          return {
-            value: token,
-            frequency: tokenizedSubmissions[token],
-            percentage: parseFloat(100* tokenizedSubmissions[token]/l)
-          }
-        })
+        // // adapt to what the google chart is expecting
+        // this._tokenizedSubmissions = Object.keys(tokenizedSubmissions).map(function(token){
+        //   return {
+        //     value: token,
+        //     frequency: tokenizedSubmissions[token],
+        //     percentage: parseFloat(100* tokenizedSubmissions[token]/l)
+        //   }
+        // })
       },
 
       _eventBusChanged: function (eventBus, old) {
@@ -194,6 +213,24 @@ Example:
 
       hasRole: function (role, candidate) {
         return role == candidate;
+      },
+
+      _calculateIronIconClass: function(correct){
+        if(correct === true){
+         return "correct"
+        }else if(correct ===false){
+         return "wrong"
+        }
+        return "";
+      },
+
+      _calculateIronIconIcon: function(correct){
+        if(correct === true){
+          return "icons:check";
+        }else if(correct ===false){
+          return "icons:clear";
+        }
+        return "";
       }
     
     });
