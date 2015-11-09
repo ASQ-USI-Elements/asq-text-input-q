@@ -1,0 +1,107 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../asq-base/asq-base.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="elements/asq-text-input-q-stats-presenter.html">
+<link rel="import" href="elements/asq-text-input-q-stats-viewer.html">
+
+<!--
+`asq-text-input-q-stats` provides a stats for `asq-text-input-q` elements. 
+
+Example:
+
+    <asq-text-input-q label="value">
+      <asq-stem><h5>What's value of a[3]?</h5></asq-stem>
+      <pre><code>
+        char a[27];
+        char *b = "abc";
+        strcpy(a, b);</code></pre>
+      <asq-solution hidden>\0</asq-solution>
+    </asq-text-input-q>
+
+
+@element asq-text-input-q-stats
+@demo demo/stats.html
+@group ASQ Elements
+@blurb Element provides a stats for `asq-text-input-q` elements.
+@homepage http://github.com/ASQ-USI-Elements/asq-text-input-q
+-->
+<dom-module id="asq-text-input-q-stats">
+
+  <template>
+
+    <style>
+      :host {
+        @apply(--layout-vertical);
+        min-height: 100px;
+      }
+    </style>
+
+    <!-- Viewer -->
+    <template is="dom-if" if="{{hasRole(role, roles.VIEWER)}}" restamp>
+      <asq-text-input-q-stats-viewer id="le-viewer" for="[[for]]" for-uid="[[forUid]]" event-bus="[[eventBus]]">
+        <content></content>
+      </asq-text-input-q-stats-viewer>
+    </template>
+
+    <!-- Presenter -->
+    <template is="dom-if" if="{{hasRole(role, roles.PRESENTER)}}" restamp>
+       <asq-text-input-q-stats-presenter id="le-presenter" for="[[for]]" for-uid="[[forUid]]" event-bus="[[eventBus]]"> 
+         <content></content>
+       </asq-text-input-q-stats-presenter>
+     </template>
+
+  </template>
+</dom-module>
+<script>
+  (function() {
+  
+    Polymer({
+
+      is: 'asq-text-input-q-stats',
+      behaviors: [ASQ.asqElementBehavior],
+
+      properties: {
+
+        /**
+         * The id of the `asq-text-input-q` this stat is for
+         */
+        for: {
+          type: String,
+          value: '',
+          notify: true,
+          reflectToAttribute: true
+        },
+
+        /**
+         * The uid of the `asq-text-input-q` this stat is for
+         */
+        forUid: {
+          type: String,
+          value: '',
+          notify: true,
+          reflectToAttribute: true
+        },
+
+        /**
+         * Event bus to communicate with ASQ
+         */
+        eventBus: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      created: function(){
+        document.addEventListener('asq-ready', function(evt){
+          this.eventBus = evt.detail.asqEventBus
+        }.bind(this));
+      },
+
+      hasRole: function (role, candidate) {
+        return role == candidate;
+      }
+    
+    });
+  })();
+</script>

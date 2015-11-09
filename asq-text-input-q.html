@@ -19,155 +19,165 @@ text questions.
 
 
 @element asq-text-input-q
+@demo demo/index.html
 @group ASQ Elements
 @blurb Element a styled single-line input field. It wraps the `paper-input` element.
 @homepage http://github.com/ASQ-USI-Elements/asq-text-input-q
 -->
-<polymer-element name="asq-text-input-q">
+<dom-module id="asq-text-input-q">
 
   <template>
+
     <style>
       :host {
         display: block;
       }
+
+      #le-content{
+        @apply(--asq-text-input-q-content);
+      }
+
+      #input{
+        @apply(--asq-text-input-q-input);
+      }
+
+     
     </style>
 
-    <content select="asq-stem"></content>
-
-    <content></content>
-
-    <div>
-      <paper-input label="{{label}}" floatingLabel="{{floatingLabel}}" 
-          value="{{value}}" disabled="{{disabled}}"></paper-input>
+    <!-- <content select="asq-stem"></content> -->
+    
+    <div id="le-content">
+      <content></content>
     </div>
 
+    <paper-input id="input" label="{{label}}" floatingLabel="{{floatingLabel}}" 
+          value="{{value}}" disabled="{{disabled}}"></paper-input>
+
   </template>
+</dom-module>
+<script>
+  (function() {
+  
+    Polymer({
 
-  <script>
-    (function() {
-    
-      var p = {
+      is: 'asq-text-input-q',
+      behaviors: [ASQ.asqQuestionElementBehavior],
 
-        publish: {
+      properties: {
 
-          /**
-           * The label for this input. It normally appears as grey text inside
-           * the text input and disappears once the user enters text.
-           *
-           * @attribute label
-           * @type string
-           * @default ''
-           */
-          label: '',
-
-          /**
-           * If true, the label will "float" above the text input once the
-           * user enters text instead of disappearing.
-           *
-           * @attribute floatingLabel
-           * @type boolean
-           * @default false
-           */
-          floatingLabel: false,
-
-          /**
-           * Set to true to style the element as disabled.
-           *
-           * @attribute disabled
-           * @type boolean
-           * @default false
-           */
-          disabled: {value: false, reflect: true},
-
-          /**
-           * The current value of the input.
-           * 
-           * @attribute value
-           * @type String
-           * @default ''
-           */
+        /**
+         * The label for this input. It normally appears as grey text inside
+         * the text input and disappears once the user enters text.
+         */
+        label: {
+          type: String,
           value: '',
-        },
-
-
-        // Overwrite defalut value for all instances of `asq-text-input-q`, which are question type.
-        isASQQuestionTypeElement : true, 
-
-        created: function(){
-          document.addEventListener('asq-ready', function(evt){
-            try {
-              this.subscribeToEvents(evt.detail.asqEventBus)
-            } catch(err){
-              console.debug('failed to subscribeToEvents');
-            }
-          }.bind(this));
-        },
-
-        onQuestionType: function(evt){
-          if(!evt || ! evt.questionType) return;
-
-          if(evt.questionType == 'asq-text-input-q'){
-            if(evt.type == "restorePresenter"){
-              if(this.role !== this.roles.PRESENTER) return;
-              this.onRestorePresenter(evt);
-            }
-            else if(evt.type == "restoreViewer"){
-              if(this.role !== this.roles.VIEWER) return;
-              this.onRestoreViewer(evt);
-            }
-          }
-        },
-
-        onRestorePresenter: function(evt){
-
-        },
-
-        onRestoreViewer: function(evt){
-          evt.questions.forEach(function(q){
-            console.log(q)
-            if(q.uid != this.uid) return;
-            this.value = q.value;
-          }.bind(this));
-        },
-
-        subscribeToEvents: function(eventBus){
-          eventBus.on('asq:question_type', this.onQuestionType.bind(this));
+          notify: true,
+          reflectToAttribute: true
         },
 
         /**
-         * The `submit` method returns an object called *detail* that respresents the submission of this question. The *detail* object has the following structure:
-
-             {
-                questionUid: this.uid,
-                timestamp: new Date(),
-                submission: submission
-             }
-         * Only enabled when the `role` of the element is <b>viewer</b>.
-         *
-         * @method submit
+         * If true, the label will "float" above the text input once the
+         * user enters text instead of disappearing.
          */
-        submit: function() {
-          if ( this.role !== this.roles.VIEWER ) {
-            return;
-          }
+        floatingLabel: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          reflectToAttribute: true
+        },
 
-          if ( ! this.value ) {
-            this.value = "";
-          }
+        /**
+         * Set to true to style the element as disabled.
+         */
+        disabled: {
+          type: Boolean,
+          value: false,
+          notify: true,
+          reflectToAttribute: true
+        },
 
-          submission = this.value.replace(/[\s]+/g, " ").trim();
-          
-          return {
-            questionUid: this.uid,
-            timestamp: new Date(),
-            submission: submission
-          };
+        /**
+         * The current value of the input.
+         */
+        value: {
+          type: String,
+          value: '',
+          notify: true,
+          reflectToAttribute: true,
         }
-      
-      }
+      },
 
-      ASQ.asqify(p, true);
-      Polymer('asq-text-input-q', p);
-    })();
-  </script>
-</polymer-element>
+      created: function(){
+        document.addEventListener('asq-ready', function(evt){
+          try {
+            this.subscribeToEvents(evt.detail.asqEventBus)
+          } catch(err){
+            console.debug('failed to subscribeToEvents');
+          }
+        }.bind(this));
+      },
+
+      onQuestionType: function(evt){
+        if(!evt || ! evt.questionType) return;
+
+        if(evt.questionType == 'asq-text-input-q'){
+          if(evt.type == "restorePresenter"){
+            if(this.role !== this.roles.PRESENTER) return;
+            this.onRestorePresenter(evt);
+          }
+          else if(evt.type == "restoreViewer"){
+            if(this.role !== this.roles.VIEWER) return;
+            this.onRestoreViewer(evt);
+          }
+        }
+      },
+
+      onRestorePresenter: function(evt){
+
+      },
+
+      onRestoreViewer: function(evt){
+        evt.questions.forEach(function(q){
+          if(q.uid != this.uid) return;
+          this.value = q.value;
+        }.bind(this));
+      },
+
+      subscribeToEvents: function(eventBus){
+        eventBus.on('asq:question_type', this.onQuestionType.bind(this));
+      },
+
+      /**
+       * The `submit` method returns an object called *detail* that respresents the submission of this question. The *detail* object has the following structure:
+
+           {
+              questionUid: this.uid,
+              timestamp: new Date(),
+              submission: submission
+           }
+       * Only enabled when the `role` of the element is <b>viewer</b>.
+       *
+       * @method submit
+       */
+      submit: function() {
+        if ( this.role !== this.roles.VIEWER ) {
+          return;
+        }
+
+        if ( ! this.value ) {
+          this.value = "";
+        }
+
+        submission = this.value.replace(/[\s]+/g, " ").trim();
+        
+        return {
+          questionUid: this.uid,
+          timestamp: new Date(),
+          submission: submission
+        };
+      }
+    
+    });
+  })();
+</script>

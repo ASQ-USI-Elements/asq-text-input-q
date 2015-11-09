@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+  <meta name="asq-elements" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  <title>asq-text-input-q | Demo</title>
+
+  <script src="../../webcomponentsjs/webcomponents.js"></script>
+
+  <link href="../asq-text-input-q.html" rel="import">
+  <link href="../asq-text-input-q-stats.html" rel="import">
+  <link href="../../asq-stem/asq-stem.html" rel="import">
+
+  <style>
+    body{
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    asq-text-input-q {
+      margin-bottom: 2em;
+      width: 200px;
+    }
+
+
+
+  </style>
+
+</head>
+<body>
+
+  <asq-text-input-q label="value" role="presenter" id="le-text-input" uid="0123456789">
+    <asq-stem><h5>What's value of a[3]?</h5></asq-stem>
+    <pre><code>
+      char a[27];
+      char *b = "abc";
+      strcpy(a, b);</code></pre>
+    <asq-solution hidden>\0</asq-solution>
+  </asq-text-input-q>
+
+  <asq-text-input-q-stats role="presenter" for="le-text-input" for-uid="0123456789">
+    <h5>Stats will appear under here</h5>
+  </asq-text-input-q-stats>
+
+
+</body>
+</html>

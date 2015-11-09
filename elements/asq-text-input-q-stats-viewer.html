@@ -1,0 +1,220 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-list/iron-list.html">
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../iron-icon/iron-icon.html">
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../paper-item/paper-item.html">
+<link rel="import" href="../../paper-progress/paper-progress.html">
+<link rel="import" href="../../asq-base/asq-base.html">
+
+<!--
+`asq-text-input-q-stats-viewer` provides the presenter view of `asq-text-input-q-stats`. 
+
+Example:
+
+    <asq-text-input-q-stats-viewer for="leId">
+    </asq-text-input-q-stats-viewer>
+
+
+@element asq-text-input-q-stats-viewer
+@demo demo/stats.html
+@group ASQ Elements
+@blurb Element provides a stats for `asq-text-input-q` elements.
+@homepage http://github.com/ASQ-USI-Elements/asq-text-input-q
+-->
+<dom-module id="asq-text-input-q-stats-viewer">
+
+  <template>
+
+    <style>
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+
+      #leList {
+        @apply(--layout-flex);
+      }
+
+      paper-item{
+        /*@apply(--layout-vertical);*/
+        padding-top: 12px;
+        background-color: white;
+        cursor: pointer;
+        @apply(--shadow-elevation-2dp);
+      }
+
+      paper-item paper-progress{
+        width: 100%;
+      }
+
+      #list-container{
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+
+      .submission-info{
+        @apply(--layout-horizontal);
+        @apply(--asq-text-input-q-stats-submission-info);
+      }
+
+      .submission-value{
+        @apply(--layout-flex);
+        @apply(--asq-text-input-q-stats-submission-value);
+      }
+
+      .submission-frequency{
+        @apply(--asq-text-input-q-stats-submission-frequency);
+      }
+
+      iron-icon.correct{
+        color: green;
+      }
+
+      iron-icon.wrong{
+        color: red;
+      }
+
+    </style>
+
+
+    <div id="list-container">
+      <iron-list id="leList" items="[[_submissions]]" as="submission">
+        <template>
+          <paper-item>
+          <paper-item-body two-line style="width:100%">
+            <div class="submission-info">
+              <div class="submission-value">[[submission.value]]</div> 
+              <div class="submission-correctness"><iron-icon class$="[[_calculateIronIconClass(submission.correct)]]" icon="[[_calculateIronIconIcon(submission.correct)]]" ></iron-icon></div>
+            </div>
+          </paper-item-body>
+          </paper-item>
+        </template>
+      </iron-list>
+    </div>
+  </template>
+</dom-module>
+<script>
+  (function() {
+  
+    Polymer({
+
+      is: 'asq-text-input-q-stats-viewer',
+      behaviors: [ASQ.asqElementBehavior],
+
+      properties: {
+
+        /**
+         * The id of the `asq-text-input-q` this stat is for.
+         */
+        for: {
+          type: String,
+          value: '',
+          notify: true,
+          reflectToAttribute: true
+        },
+
+        /**
+         * The uid of the `asq-text-input-q` this stat is for.
+         */
+        forUid: {
+          type: String,
+          value: '',
+          notify: true,
+          reflectToAttribute: true
+        },
+
+         /**
+         * submissions
+         */
+        _submissions: {
+          type: Array,
+          notify: true
+        },
+
+        /**
+         * Tokenized submissions with frequency and percentage.
+         */
+        _tokenizedSubmissions: {
+          type: Array,
+          notify: true
+        },
+
+        /**
+         * Event bus to communicate with ASQ.
+         */
+        eventBus: {
+          type: Object,
+          observer: "_eventBusChanged",
+          notify: true
+        }
+      },
+
+      _onQuestionType: function(evt){
+        if(!evt || ! evt.questionType) return;
+
+        if(evt.questionType == 'asq-text-input-q'){
+          if(evt.type == "progress"){
+            this._onProgress(evt);
+          }
+          else if(evt.type == "restoreViewer"){
+            this._onRestoreViewer(evt);
+          }
+        }
+      },
+
+      _onRestoreViewer: function(evt){
+        evt.questions.forEach(function(q){
+         if(q.uid != this.forUid) return;
+
+         var submission = {
+           value: q.answer.submission,
+           correct: q.answer.isSubmissionCorrect
+         }
+         this._submissions = [submission];
+
+        }.bind(this));
+      },
+
+      _onProgress: function (evt) {
+        if (!evt.question || evt.question.uid !== this.forUid)
+          return;
+
+        var submission = {
+          value: evt.question.answer.submission,
+          correct: evt.question.answer.isSubmissionCorrect
+        }
+
+        this._submissions = [submission];
+      },
+
+      _eventBusChanged: function (eventBus, old) {
+        if(!eventBus) return;
+        eventBus.on('asq:question_type', this._onQuestionType.bind(this));
+      },
+
+      hasRole: function (role, candidate) {
+        return role == candidate;
+      },
+
+      _calculateIronIconClass: function(correct){
+        if(correct === true){
+         return "correct"
+        }else if(correct ===false){
+         return "wrong"
+        }
+        return "";
+      },
+
+      _calculateIronIconIcon: function(correct){
+        if(correct === true){
+          return "icons:check";
+        }else if(correct ===false){
+          return "icons:clear";
+        }
+        return "";
+      }
+    
+    });
+  })();
+</script>

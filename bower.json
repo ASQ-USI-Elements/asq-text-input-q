@@ -1,6 +1,6 @@
 {
   "name": "asq-text-input-q",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "homepage": "https://github.com/ASQ-USI-Elements/asq-text-input-q",
   "authors": [
     "Vasileios Triglianos <triglian@gmail.com>",
@@ -12,13 +12,27 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "polymer": "Polymer/polymer#^0.5.1",
-    "paper-input": "Polymer/paper-input#^0.5.2",
-    "asq-base": "ASQ-USI-Elements/asq-base#master"
-    
+    "asq-base": "ASQ-USI-Elements/asq-base#feat-polymer-1",
+    "google-chart": "GoogleWebComponents/google-chart#~1.0.2",
+    "iron-icon": "PolymerElements/iron-icon#~1.0.4",
+    "iron-icons": "PolymerElements/iron-icons#~1.0.3",
+    "iron-list": "polymerelements/iron-list#~1.1.1",
+    "paper-input": "PolymerElements/paper-input",
+    "paper-item": "polymerelements/paper-item#~1.0.2",
+    "paper-progress": "polymerElements/paper-progress#~1.0.4",
+    "polymer": "Polymer/Polymer#~1.1.0"
   },
-  "ignore": [ "index.js", "lib", "package.json", "node_modules", ".npmignore", "test/server"],
+  "ignore": [
+    "index.js",
+    "lib",
+    "package.json",
+    "node_modules",
+    ".npmignore",
+    ".gitignore",
+    "test/server"
+  ],
   "devDependencies": {
-    "web-component-tester": "Polymer/web-component-tester#^2.0.0-rc1"
+    "web-component-tester": "Polymer/web-component-tester#~3.3.21",
+    "iron-component-page": "PolymerElements/iron-component-page#~1.0.5"
   }
 }

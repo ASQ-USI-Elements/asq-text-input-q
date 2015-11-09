@@ -10,9 +10,9 @@
   "dependencies": {
     "asq-plugin": "ASQ-USI/asq-plugin",
     "bluebird": "^2.9.7",
-    "cheerio": "^0.18.0",
-    "lodash": "^3.2.0",
-    "mongoose": "^4.0.5"
+    "bson-objectid": "^1.1.1",
+    "cheerio": "^0.19.0",
+    "lodash": "^3.2.0"
   },
   "bugs": {
     "url": "https://github.com/ASQ-USI-Elements/asq-text-input-q/issues"
