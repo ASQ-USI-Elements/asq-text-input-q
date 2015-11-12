@@ -13,14 +13,13 @@
   "license": "MIT",
   "dependencies": {
     "asq-base": "ASQ-USI-Elements/asq-base#master",
-    "google-chart": "GoogleWebComponents/google-chart#~1.0.2",
-    "iron-icon": "PolymerElements/iron-icon#~1.0.4",
-    "iron-icons": "PolymerElements/iron-icons#~1.0.3",
-    "iron-list": "polymerelements/iron-list#~1.1.1",
-    "paper-input": "PolymerElements/paper-input",
-    "paper-item": "polymerelements/paper-item#~1.0.2",
-    "paper-progress": "polymerElements/paper-progress#~1.0.4",
-    "polymer": "Polymer/Polymer#~1.1.0"
+    "iron-icon": "PolymerElements/iron-icon#~1.0.7",
+    "iron-icons": "PolymerElements/iron-icons#~1.0.4",
+    "iron-list": "polymerelements/iron-list#~1.1.5",
+    "paper-input": "PolymerElements/paper-input#~1.0.18",
+    "paper-item": "polymerelements/paper-item#~1.0.7",
+    "paper-progress": "polymerElements/paper-progress#~1.0.7",
+    "polymer": "Polymer/Polymer#~1.2.1"
   },
   "ignore": [
     "index.js",
@@ -32,7 +31,7 @@
     "test/server"
   ],
   "devDependencies": {
-    "web-component-tester": "Polymer/web-component-tester#~3.3.21",
-    "iron-component-page": "PolymerElements/iron-component-page#~1.0.5"
+    "iron-component-page": "PolymerElements/iron-component-page#~1.0.9",
+    "web-component-tester": "Polymer/web-component-tester#~3.3.29"
   }
 }
