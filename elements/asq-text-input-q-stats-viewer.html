@@ -203,11 +203,14 @@ Example:
         evt.questions.forEach(function(q){
          if(q.uid != this.forUid) return;
 
-         var submission = {
-           value: q.selfAnswer.submission,
-           correct: q.selfAnswer.isSubmissionCorrect
+         if( q.selfAnswer){
+          var submission = {
+            value: q.selfAnswer.submission,
+            correct: q.selfAnswer.isSubmissionCorrect
+          }
+          this._selfSubmission = submission;
          }
-         this._selfSubmission = submission;
+
         this._answers = q.answers;
 
         }.bind(this));
