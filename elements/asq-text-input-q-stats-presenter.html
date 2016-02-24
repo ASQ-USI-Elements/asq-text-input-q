@@ -85,7 +85,8 @@ Example:
           <paper-item-body two-line style="width:100%">
             <div class="submission-info">
               <div class="submission-value">[[submission.value]]</div>
-              <div class="submission-frequency">(<span>[[submission.frequency]]</span>)</div>              <div class="submission-correctness"><iron-icon class$="[[_calculateIronIconClass(submission.correct)]]" icon="[[_calculateIronIconIcon(submission.correct)]]" ></iron-icon></div>
+              <div class="submission-frequency">(<span>[[submission.frequency]]</span>)</div>
+              <div class="submission-correctness"><iron-icon class$="[[_calculateIronIconClass(submission.correct)]]" icon="[[_calculateIronIconIcon(submission.correct)]]" ></iron-icon></div>
               </div>
             <div><paper-progress value="[[submission.percentage]]"></paper-progress></div>
           </paper-item-body>
@@ -200,7 +201,7 @@ Example:
             value: token,
             frequency: tokenizedSubmissions[token].frequency,
             correct: tokenizedSubmissions[token].correct,
-            percentage: parseFloat(100* tokenizedSubmissions[token]/l)
+            percentage: parseFloat(100* tokenizedSubmissions[token].frequency/l)
           }
         })
       },

@@ -39,7 +39,7 @@ Example:
 
     <!-- Viewer -->
     <template is="dom-if" if="{{hasRole(role, roles.VIEWER)}}" restamp>
-      <asq-text-input-q-stats-viewer id="le-viewer" for="[[for]]" for-uid="[[forUid]]" event-bus="[[eventBus]]">
+      <asq-text-input-q-stats-viewer id="le-viewer" for="[[for]]" for-uid="[[forUid]]" event-bus="[[eventBus]]" show="{{showViewer}}">
         <content></content>
       </asq-text-input-q-stats-viewer>
     </template>
@@ -88,6 +88,15 @@ Example:
          */
         eventBus: {
           type: Object,
+          notify: true
+        },
+
+        /**
+         * Whether it should show just the viewer's answer (`self`) or all the answers (`all`)
+         */
+        showViewer:{
+          type: String,
+          value: "self",
           notify: true
         }
       },

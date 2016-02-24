@@ -58,6 +58,11 @@ Example:
         @apply(--asq-text-input-q-stats-submission-info);
       }
 
+      .submission-user-info{
+        width: 40px;
+        @apply(--asq-text-input-q-stats-submission-user-info);
+      }
+
       .submission-value{
         @apply(--layout-flex);
         @apply(--asq-text-input-q-stats-submission-value);
@@ -75,18 +80,36 @@ Example:
         color: red;
       }
 
+      #self-submission{
+        margin-bottom: 0.2em;
+        @apply(--asq-text-input-q-stats-self-submission);
+      }
+
     </style>
 
 
     <div id="list-container">
-      <iron-list id="leList" items="[[_submissions]]" as="submission">
+      <paper-item id="self-submission">
+        <paper-item-body two-line style="width:100%">
+          <div class="submission-info">
+            <div class="submission-user-info">
+                <iron-icon icon="icons:face"></iron-icon>
+            </div>
+            <div class="submission-value">[[_selfSubmission.value]]</div> 
+            <div class="submission-correctness"><iron-icon class$="[[_calculateCorrectnessIconClass(_selfSubmission.correct)]]" icon="[[_calculateCorrectnessIconIcon(_selfSubmission.correct)]]" ></iron-icon></div>
+          </div>
+        </paper-item-body>
+      </paper-item>
+      <iron-list id="leList" items="[[_tokenizedSubmissions]]" as="submission">
         <template>
           <paper-item>
           <paper-item-body two-line style="width:100%">
             <div class="submission-info">
-              <div class="submission-value">[[submission.value]]</div> 
-              <div class="submission-correctness"><iron-icon class$="[[_calculateIronIconClass(submission.correct)]]" icon="[[_calculateIronIconIcon(submission.correct)]]" ></iron-icon></div>
-            </div>
+              <div class="submission-value">[[submission.value]]</div>
+              <div class="submission-frequency">(<span>[[submission.frequency]]</span>)</div>
+              <div class="submission-correctness"><iron-icon class$="[[_calculateCorrectnessIconClass(submission.correct)]]" icon="[[_calculateCorrectnessIconIcon(submission.correct)]]" ></iron-icon></div>
+              </div>
+            <div><paper-progress value="[[submission.percentage]]"></paper-progress></div>
           </paper-item-body>
           </paper-item>
         </template>
@@ -124,11 +147,12 @@ Example:
           reflectToAttribute: true
         },
 
-         /**
+        /**
          * submissions
          */
-        _submissions: {
+        _answers: {
           type: Array,
+          observer: "_answersChanged",
           notify: true
         },
 
@@ -147,6 +171,15 @@ Example:
           type: Object,
           observer: "_eventBusChanged",
           notify: true
+        },
+
+        /**
+         * Whether it should show just the viewer's answer (`self`) or all the answers (`all`)
+         */
+        show:{
+          type: String,
+          value: "self",
+          notify: true
         }
       },
 
@@ -154,8 +187,11 @@ Example:
         if(!evt || ! evt.questionType) return;
 
         if(evt.questionType == 'asq-text-input-q'){
-          if(evt.type == "progress"){
-            this._onProgress(evt);
+          if(evt.type == "self-progress"){
+            this._onSelfProgress(evt);
+          }
+          else if(evt.type == "progress"){
+            this._onAllProgress(evt);
           }
           else if(evt.type == "restoreViewer"){
             this._onRestoreViewer(evt);
@@ -168,15 +204,16 @@ Example:
          if(q.uid != this.forUid) return;
 
          var submission = {
-           value: q.answer.submission,
-           correct: q.answer.isSubmissionCorrect
+           value: q.selfAnswer.submission,
+           correct: q.selfAnswer.isSubmissionCorrect
          }
-         this._submissions = [submission];
+         this._selfSubmission = submission;
+        this._answers = q.answers;
 
         }.bind(this));
       },
 
-      _onProgress: function (evt) {
+      _onSelfProgress: function (evt) {
         if (!evt.question || evt.question.uid !== this.forUid)
           return;
 
@@ -185,7 +222,40 @@ Example:
           correct: evt.question.answer.isSubmissionCorrect
         }
 
-        this._submissions = [submission];
+        this._selfSubmission = submission;
+      },
+
+      _onAllProgress: function (evt) {
+        if (!evt.question || evt.question.uid !== this.forUid)
+          return;
+
+        this._answers = evt.question.answers;
+      },
+
+      _answersChanged: function(answers){
+        if(!answers && answers.length) return;
+        var l = answers.length;
+
+        //token count
+        var tokenizedSubmissions = Object.create(null);
+        answers.map(function(answer){
+          var sub = answer.submission;
+          if(typeof sub !== 'string') return;
+          tokenizedSubmissions[sub] = tokenizedSubmissions[sub] || {
+            frequency: 0,
+            correct: answer.isSubmissionCorrect
+          };
+          tokenizedSubmissions[sub].frequency++;
+        })
+
+        this._tokenizedSubmissions = Object.keys(tokenizedSubmissions).map(function(token){
+          return {
+            value: token,
+            frequency: tokenizedSubmissions[token].frequency,
+            correct: tokenizedSubmissions[token].correct,
+            percentage: parseFloat(100* tokenizedSubmissions[token].frequency/l)
+          }
+        })
       },
 
       _eventBusChanged: function (eventBus, old) {
@@ -197,7 +267,7 @@ Example:
         return role == candidate;
       },
 
-      _calculateIronIconClass: function(correct){
+      _calculateCorrectnessIconClass: function(correct){
         if(correct === true){
          return "correct"
         }else if(correct ===false){
@@ -206,7 +276,7 @@ Example:
         return "";
       },
 
-      _calculateIronIconIcon: function(correct){
+      _calculateCorrectnessIconIcon: function(correct){
         if(correct === true){
           return "icons:check";
         }else if(correct ===false){
