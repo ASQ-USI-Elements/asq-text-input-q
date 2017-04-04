@@ -1,15 +1,15 @@
-"use strict";
+'use strict';
 
 var chai = require('chai');
-var sinon = require("sinon");
+var sinon = require('sinon');
 var should = chai.should();
 var expect = chai.expect;
 var cheerio = require('cheerio');
 var Promise = require('bluebird');
-var modulePath = "../../lib/asqTextInputPlugin";
-var fs = require("fs");
+var modulePath = '../../lib/asqTextInputPlugin';
+var fs = require('fs');
 
-describe("asqTextInputPlugin.js", function(){
+describe('asqTextInputPlugin.js', function(){
   
   before(function(){
     var then =  this.then = function(cb){
@@ -20,7 +20,7 @@ describe("asqTextInputPlugin.js", function(){
       then: then
     });
 
-    this.tagName = "asq-text-input";
+    this.tagName = 'asq-text-input-q';
 
     this.asq = {
       registerHook: function(){},
@@ -41,10 +41,10 @@ describe("asqTextInputPlugin.js", function(){
     this.asqTextInputPlugin = require(modulePath);
   });
 
-   describe("parseHtml", function(){
+   describe('parseHtml', function(){
 
     before(function(){
-     sinon.stub(this.asqTextInputPlugin.prototype, "processEl").returns("res");
+     sinon.stub(this.asqTextInputPlugin.prototype, 'processEl').returns('res');
     });
 
     beforeEach(function(){
@@ -57,8 +57,8 @@ describe("asqTextInputPlugin.js", function(){
       this.asqTextInputPlugin.prototype.processEl.restore();
     });
 
-    it("should call processEl() for all asq-text-input elements", function(done){
-      this.asqti.parseHtml(this.simpleHtml)
+    it('should call processEl() for all asq-text-input-q elements', function(done){
+      this.asqti.parseHtml({ html: this.simpleHtml })
       .then(function(){
         this.asqti.processEl.calledTwice.should.equal(true);
         done();
@@ -68,11 +68,12 @@ describe("asqTextInputPlugin.js", function(){
       })
     });
 
-    it("should call `model().create()` to persist parsed questions in the db", function(done){
-      this.asqti.parseHtml(this.simpleHtml)
+    it('should call `model().create()` to persist parsed questions in the db', function(done){
+      this.asqti.parseHtml({ html: this.simpleHtml })
       .then(function(result){
-        this.create.calledOnce.should.equal(true);
-        this.create.calledWith(["res", "res"]).should.equal(true);
+        // it should be called twice: once for questions and once for stats
+        this.create.calledTwice.should.equal(true);
+        this.create.calledWith(['res', 'res']).should.equal(true);
         done();
       }.bind(this))
       .catch(function(err){
@@ -80,10 +81,10 @@ describe("asqTextInputPlugin.js", function(){
       })
     });
 
-    it("should resolve with the file's html", function(done){
-      this.asqti.parseHtml(this.simpleHtml)
+    it('should resolve with the file\'s html', function(done){
+      this.asqti.parseHtml({ html: this.simpleHtml })
       .then(function(result){
-        expect(result).to.equal(this.simpleHtml);
+        expect(result).to.deep.equal({ html: this.simpleHtml });
         done();
       }.bind(this))
       .catch(function(err){
@@ -93,10 +94,10 @@ describe("asqTextInputPlugin.js", function(){
 
   });
 
-  describe("processEl", function(){
+  describe('processEl', function(){
 
     before(function(){
-     sinon.stub(this.asqTextInputPlugin.prototype, "parseSolution").returns("sol");
+     sinon.stub(this.asqTextInputPlugin.prototype, 'parseSolution').returns('sol');
     });
 
     beforeEach(function(){
@@ -108,23 +109,23 @@ describe("asqTextInputPlugin.js", function(){
      this.asqTextInputPlugin.prototype.parseSolution.restore();
     });
 
-    it("should assign a uid to the question if there's not one", function(){
+    it('should assign a uid to the question if there\'s not one', function(){
       var $ = cheerio.load(this.simpleHtml);
       
       //this doesn't have an id
-      var el = $("#no-uid")[0];
+      var el = $('#no-uid')[0];
       this.asqti.processEl($, el);
       $(el).attr('uid').should.exist;
-      $(el).attr('uid').should.not.equal("a-uid");
+      $(el).attr('uid').should.not.equal('a-uid');
 
       //this already has one
-      el = $("#uid")[0];
+      el = $('#uid')[0];
       this.asqti.processEl($, el);
       $(el).attr('uid').should.exist;
-      $(el).attr('uid').should.equal("a-uid");
+      $(el).attr('uid').should.equal('a-uid');
     });
 
-    it("should call parseSolution()", function(){
+    it('should call parseSolution()', function(){
       var $ = cheerio.load(this.simpleHtml);
       var el = $(this.tagName)[0];
 
@@ -132,66 +133,119 @@ describe("asqTextInputPlugin.js", function(){
       this.asqti.parseSolution.calledOnce.should.equal(true);
     });
 
-    it("should find the stem if it exists", function(){
+    it('should find the stem if it exists', function(){
       var $ = cheerio.load(this.simpleHtml);
-      var el = $("#no-uid")[0];
-      var elWithHtmlInStem = $("#uid")[0];
+      var el = $('#no-uid')[0];
+      var elWithHtmlInStem = $('#uid')[0];
 
       var result = this.asqti.processEl($, el);
-      expect(result.data.stem).to.equal("This is a stem");
+      expect(result.data.stem).to.equal('This is a stem');
 
       var result = this.asqti.processEl($, elWithHtmlInStem);
-      expect(result.data.stem).to.equal("<h2>What&apos;s the root of 9?</h2>");
+      expect(result.data.stem).to.equal('<h2>What&apos;s the root of 9?</h2>');
 
 
       var $ = cheerio.load(this.noStemHtml);
-      var el = $("#no-uid")[0];
+      var el = $('#no-uid')[0];
       var result = this.asqti.processEl($, el);
-      expect(result.data.stem).to.equal("");
+      expect(result.data.stem).to.equal('');
 
 
     });
 
-    it("should return correct data", function(){
+    it('should return correct data', function(){
       var $ = cheerio.load(this.simpleHtml);
-      var el = $("#uid")[0];
+      var el = $('#uid')[0];
 
       var result = this.asqti.processEl($, el);
-      expect(result._id).to.equal("a-uid");
+      expect(result._id).to.equal('a-uid');
       expect(result.type).to.equal(this.tagName);
-      expect(result.data.stem).to.equal("<h2>What&apos;s the root of 9?</h2>");
-      expect(result.data.solution).to.equal("sol");
+      expect(result.data.stem).to.equal('<h2>What&apos;s the root of 9?</h2>');
+      expect(result.data.solution).to.equal('sol');
     });
   });
 
-  describe("parseSolution", function(){
+  describe('parseSolution', function(){
 
     beforeEach(function(){
       this.$ = cheerio.load(this.solutionsHtml);
       this.asqti = new this.asqTextInputPlugin(this.asq);
     });
 
-    it("should delete the 'asq-solution' after parsing", function(){
-      var el = this.$("#uid")[0];
+    it('should delete the \'asq-solution\' after parsing', function(){
+      var el = this.$('#uid')[0];
       var result = this.asqti.parseSolution(this.$, el);
-      var sol = this.$(el).find("asq-solution").length;
+      var sol = this.$(el).find('asq-solution').length;
       expect(sol).to.equal(0);
 
     });
 
-    it("should return the correct data", function(){
-      var el = this.$("#uid")[0];
+    it('should return the correct data', function(){
+      var el = this.$('#uid')[0];
       var result = this.asqti.parseSolution(this.$, el);
-      expect(result).to.equal("x");
+      expect(result).to.equal('x');
 
     });
 
-    it("should have more than two soltions before parsing", function(){
-      var el = this.$("#uid")[0];
-      var sol = this.$(el).find("asq-solution").length;
+    it('should have more than two solutions before parsing', function(){
+      var el = this.$('#uid')[0];
+      var sol = this.$(el).find('asq-solution').length;
       expect(sol).to.equal(1);
-
     });
 
   });
+
+  describe('isSubmissionCorrect', function(){
+    beforeEach(function(){
+      this.asqti = new this.asqTextInputPlugin(this.asq);
+    });
+
+    it('should return true if submission matches string solution', function(){
+      this.asqti.isSubmissionCorrect('test', 'test').should.equal(true)
+    })
+    it('should return true if submissions matches regex solution', function(){
+      this.asqti.isSubmissionCorrect('^test$', 'test').should.equal(true)
+    })
+    it('should return false if submission doesn\'t match string solution', function(){
+      this.asqti.isSubmissionCorrect('test', 'unmatch').should.equal(false)
+    })
+    it('should return true if submission doesn\'t match regex solution', function(){
+      this.asqti.isSubmissionCorrect('^test$', 'testtest').should.equal(false)
+    })
+  });
+
+  describe('answerSubmission', function(){
+    it.skip('TODO: write tests for this')
+  });
+  describe('calculateProgress', function(){
+    it.skip('TODO: write tests for this')
+  });
+  describe('sendProgressToPresenters', function(){
+    it.skip('TODO: write tests for this')
+  });
+  describe('sendFeedbackToAnsweree', function(){
+    it.skip('TODO: write tests for this')
+  });
+  describe('checkAndSendProgressToViewers', function(){
+    it.skip('TODO: write tests for this')
+  });
+  describe('processStatsEl', function(){
+    it.skip('TODO: write tests for this')
+  });
+  describe('getMostRecentAnswersForQuestions', function(){
+    it.skip('TODO: write tests for this')
+  });
+  describe('restorePresenterForSession', function(){
+    it.skip('TODO: write tests for this')
+  });
+  describe('presenterConnected', function(){
+    it.skip('TODO: write tests for this')
+  });
+  describe('restoreViewerForSession', function(){
+    it.skip('TODO: write tests for this')
+  });
+  describe('viewerConnected', function(){
+    it.skip('TODO: write tests for this')
+  });
+
 });
