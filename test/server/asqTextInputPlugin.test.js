@@ -37,6 +37,7 @@ describe('asqTextInputPlugin.js', function(){
     this.simpleHtml = fs.readFileSync(require.resolve('./fixtures/simple.html'), 'utf-8');
     this.noStemHtml = fs.readFileSync(require.resolve('./fixtures/no-stem.html'), 'utf-8');
     this.solutionsHtml = fs.readFileSync(require.resolve('./fixtures/solutions.html'), 'utf-8');
+    this.hintsHtml = fs.readFileSync(require.resolve('./fixtures/hints.html'), 'utf-8');
     
     this.asqTextInputPlugin = require(modulePath);
   });
@@ -98,6 +99,7 @@ describe('asqTextInputPlugin.js', function(){
 
     before(function(){
      sinon.stub(this.asqTextInputPlugin.prototype, 'parseSolution').returns('sol');
+     sinon.stub(this.asqTextInputPlugin.prototype, 'parseHint').returns('hint');
     });
 
     beforeEach(function(){
@@ -107,6 +109,7 @@ describe('asqTextInputPlugin.js', function(){
 
     after(function(){
      this.asqTextInputPlugin.prototype.parseSolution.restore();
+     this.asqTextInputPlugin.prototype.parseHint.restore();
     });
 
     it('should assign a uid to the question if there\'s not one', function(){
@@ -162,6 +165,7 @@ describe('asqTextInputPlugin.js', function(){
       expect(result.type).to.equal(this.tagName);
       expect(result.data.stem).to.equal('<h2>What&apos;s the root of 9?</h2>');
       expect(result.data.solution).to.equal('sol');
+      expect(result.data.hint).to.equal('hint');
     });
   });
 
@@ -172,25 +176,68 @@ describe('asqTextInputPlugin.js', function(){
       this.asqti = new this.asqTextInputPlugin(this.asq);
     });
 
-    it('should delete the \'asq-solution\' after parsing', function(){
+    it('should delete the <asq-solution> after parsing', function(){
       var el = this.$('#uid')[0];
       var result = this.asqti.parseSolution(this.$, el);
       var sol = this.$(el).find('asq-solution').length;
       expect(sol).to.equal(0);
+    });
 
+    it('should delete all <asq-solution> elements after parsing', function(){
+      var el = this.$('#two-solutions')[0];
+      var sol = this.$(el).find('asq-solution').length;
+      expect(sol).to.equal(2);
+      var result = this.asqti.parseSolution(this.$, el);
+      sol = this.$(el).find('asq-solution').length;
+      expect(sol).to.equal(0);
     });
 
     it('should return the correct data', function(){
       var el = this.$('#uid')[0];
       var result = this.asqti.parseSolution(this.$, el);
-      expect(result).to.equal('x');
-
+      expect(result).to.equal('le solution');
     });
 
-    it('should have more than two solutions before parsing', function(){
+    it('should store only the first <asq-solution> element', function(){
+      var el = this.$('#two-solutions')[0];
+      var result = this.asqti.parseSolution(this.$, el);
+      expect(result).to.equal('le solution 1');
+    });
+  });
+
+  describe('parseHint', function(){
+
+    beforeEach(function(){
+      this.$ = cheerio.load(this.hintsHtml);
+      this.asqti = new this.asqTextInputPlugin(this.asq);
+    });
+
+    it('should delete one <asq-hint> after parsing', function(){
       var el = this.$('#uid')[0];
-      var sol = this.$(el).find('asq-solution').length;
-      expect(sol).to.equal(1);
+      var result = this.asqti.parseHint(this.$, el);
+      var hint = this.$(el).find('asq-hint').length;
+      expect(hint).to.equal(0);
+    });
+
+    it('should delete all <asq-hint> elements after parsing', function(){
+      var el = this.$('#two-hints')[0];
+      var hint = this.$(el).find('asq-hint').length;
+      expect(hint).to.equal(2);
+      var result = this.asqti.parseHint(this.$, el);
+      hint = this.$(el).find('asq-hint').length;
+      expect(hint).to.equal(0);
+    });
+
+    it('should return the correct data', function(){
+      var el = this.$('#uid')[0];
+      var result = this.asqti.parseHint(this.$, el);
+      expect(result).to.equal('<div>le hint</div>');
+    });
+
+    it('should store only the first <asq-hint> element', function(){
+      var el = this.$('#two-hints')[0];
+      var result = this.asqti.parseHint(this.$, el);
+      expect(result).to.equal('<div>le hint 1</div>');
     });
 
   });
