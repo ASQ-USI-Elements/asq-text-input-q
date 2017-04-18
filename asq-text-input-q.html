@@ -15,6 +15,7 @@ text questions.
         char *b = "abc";
         strcpy(a, b);</code></pre>
       <asq-solution hidden>\0</asq-solution>
+      <asq-hint>terminating character of C strings</asq-hint>
     </asq-text-input-q>
 
 
@@ -41,7 +42,29 @@ text questions.
         @apply(--asq-text-input-q-input);
       }
 
-     
+      #hint{
+        display: none;
+        @apply(--asq-hint);
+        @apply(--asq-text-input-q-hint);
+      }
+
+      #hint.active{
+        display: block;
+        @apply(--asq-hint-active);
+        @apply(--asq-text-input-q-hint-active);
+      }
+
+      #hint.correct{
+        display: block;
+        @apply(--asq-hint-correct);
+        @apply(--asq-text-input-q-hint-correct);
+      }
+
+      #hint.incorrect{
+        display: block;
+        @apply(--asq-hint-incorrect);
+        @apply(--asq-text-input-q-hint-incorrect);
+      }
     </style>
 
     <!-- <content select="asq-stem"></content> -->
@@ -52,6 +75,8 @@ text questions.
 
     <paper-input id="input" label="{{label}}" floatingLabel="{{floatingLabel}}" 
           value="{{value}}" disabled="{{disabled}}"></paper-input>
+
+    <asq-hint id="hint" inner-h-t-m-l="[[hint]]"></asq-hint>
 
   </template>
 </dom-module>
@@ -98,6 +123,14 @@ text questions.
         },
 
         /**
+         * The hint. It can be HTML
+         */
+        hint: {
+          type: String,
+          value: ''
+        },
+
+        /**
          * The current value of the input.
          */
         value: {
@@ -122,26 +155,66 @@ text questions.
         if(!evt || ! evt.questionType) return;
 
         if(evt.questionType == 'asq-text-input-q'){
-          if(evt.type == "restorePresenter"){
-            if(this.role !== this.roles.PRESENTER) return;
-            this.onRestorePresenter(evt);
-          }
-          else if(evt.type == "restoreViewer"){
-            if(this.role !== this.roles.VIEWER) return;
-            this.onRestoreViewer(evt);
+          switch(evt.type){
+            case 'restorePresenter':
+              if(this.role !== this.roles.PRESENTER) return;
+              this.onRestorePresenter(evt);
+              break;
+            case 'restoreViewer':
+              if(this.role !== this.roles.VIEWER) return;
+              this.onRestoreViewer(evt);
+              break;
+            case 'self-progress':
+              if(this.role !== this.roles.VIEWER) return;
+              this.onSelfProgress(evt);
+              break;
+            case 'show-hint-quiztimedout':
+              if(this.role !== this.roles.VIEWER) return;
+              this.onShowHintQuizTimedOut(evt);
+              break;
           }
         }
       },
 
-      onRestorePresenter: function(evt){
-
-      },
+      onRestorePresenter: function(evt){},
 
       onRestoreViewer: function(evt){
         evt.questions.forEach(function(q){
           if(q.uid != this.uid) return;
-          this.value = q.value;
+          if(typeof q.ownAnswer === 'undefined') return;
+          this.value = q.ownAnswer.submission;
+
+          if(q.ownAnswer.isSubmissionCorrect){
+            this.hint = 'Correct.'
+            this.$.hint.classList.add('active', 'correct');
+          }else if(! q.ownAnswer.isSubmissionCorrect && q.data.hint){
+            this.hint = 'Incorrect.' +  q.data.hint;
+            this.$.hint.classList.add('active', 'incorrect');
+          }
         }.bind(this));
+      },
+
+      onSelfProgress: function(evt){
+        if(evt.question.uid != this.uid) return;
+
+        if(evt.question.answer.isSubmissionCorrect){
+          this.hint = 'Correct.'
+          this.$.hint.classList.add('active', 'correct');
+        }else if(! evt.question.answer.isSubmissionCorrect && evt.question.data.hint){
+          this.hint = 'Incorrect.' +  evt.question.data.hint;
+          this.$.hint.classList.add('active', 'incorrect');
+        }
+        this.fire('self-progress', evt);
+      },
+
+      onShowHintQuizTimedOut: function(evt){
+        if(evt.question.uid != this.uid) return;
+
+        if(evt.question.data.hint){
+          this.hint = 'Sorry - time ran out. ' + evt.question.data.hint;
+          this.$.hint.classList.add('active', 'incorrect');
+        }
+        this.fire('show-hint-quiztimedout', evt);
       },
 
       subscribeToEvents: function(eventBus){
