@@ -151,6 +151,11 @@ text questions.
         }.bind(this));
       },
 
+      _resetHint: function(){
+        this.hint = '';
+        this.$.hint.classList.remove('active', 'correct', 'incorrect');
+      },
+
       onQuestionType: function(evt){
         if(!evt || ! evt.questionType) return;
 
@@ -158,31 +163,33 @@ text questions.
           switch(evt.type){
             case 'restorePresenter':
               if(this.role !== this.roles.PRESENTER) return;
-              this.onRestorePresenter(evt);
+              this._onRestorePresenter(evt);
               break;
             case 'restoreViewer':
               if(this.role !== this.roles.VIEWER) return;
-              this.onRestoreViewer(evt);
+              this._onRestoreViewer(evt);
               break;
             case 'self-progress':
               if(this.role !== this.roles.VIEWER) return;
-              this.onSelfProgress(evt);
+              this._onSelfProgress(evt);
               break;
             case 'show-hint-quiztimedout':
               if(this.role !== this.roles.VIEWER) return;
-              this.onShowHintQuizTimedOut(evt);
+              this._onShowHintQuizTimedOut(evt);
               break;
           }
         }
       },
 
-      onRestorePresenter: function(evt){},
+      _onRestorePresenter: function(evt){},
 
-      onRestoreViewer: function(evt){
+      _onRestoreViewer: function(evt){
         evt.questions.forEach(function(q){
           if(q.uid != this.uid) return;
           if(typeof q.ownAnswer === 'undefined') return;
           this.value = q.ownAnswer.submission;
+
+          this._resetHint();
 
           if(q.ownAnswer.isSubmissionCorrect){
             this.hint = 'Correct.'
@@ -194,8 +201,10 @@ text questions.
         }.bind(this));
       },
 
-      onSelfProgress: function(evt){
+      _onSelfProgress: function(evt){
         if(evt.question.uid != this.uid) return;
+
+        this._resetHint();
 
         if(evt.question.answer.isSubmissionCorrect){
           this.hint = 'Correct.'
@@ -207,8 +216,10 @@ text questions.
         this.fire('self-progress', evt);
       },
 
-      onShowHintQuizTimedOut: function(evt){
+      _onShowHintQuizTimedOut: function(evt){
         if(evt.question.uid != this.uid) return;
+
+        this._resetHint();
 
         if(evt.question.data.hint){
           this.hint = 'Sorry - time ran out. ' + evt.question.data.hint;
