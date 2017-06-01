@@ -131,6 +131,22 @@ text questions.
         },
 
         /**
+         * show hint when the element receives self progress
+         */
+        showHintOnSelfProgress: {
+          type: Boolean,
+          value: true
+        },
+
+        /**
+         * show hint when the the submission timesout
+         */
+        showHintOnTimeout: {
+          type: Boolean,
+          value: true
+        },
+
+        /**
          * The current value of the input.
          */
         value: {
@@ -204,15 +220,20 @@ text questions.
       _onSelfProgress: function(evt){
         if(evt.question.uid != this.uid) return;
 
+        evt.question.domId = this.id;
+
         this._resetHint();
 
-        if(evt.question.answer.isSubmissionCorrect){
-          this.hint = 'Correct.'
-          this.$.hint.classList.add('active', 'correct');
-        }else if(! evt.question.answer.isSubmissionCorrect && evt.question.data.hint){
-          this.hint = 'Incorrect.' +  evt.question.data.hint;
-          this.$.hint.classList.add('active', 'incorrect');
+        if(this.showHintOnSelfProgress){
+          if(evt.question.answer.isSubmissionCorrect){
+            this.hint = 'Correct.'
+            this.$.hint.classList.add('active', 'correct');
+          }else if(! evt.question.answer.isSubmissionCorrect && evt.question.data.hint){
+            this.hint = 'Incorrect.' +  evt.question.data.hint;
+            this.$.hint.classList.add('active', 'incorrect');
+          }
         }
+        
         this.fire('self-progress', evt);
       },
 
@@ -221,10 +242,13 @@ text questions.
 
         this._resetHint();
 
-        if(evt.question.data.hint){
-          this.hint = 'Sorry - time ran out. ' + evt.question.data.hint;
-          this.$.hint.classList.add('active', 'incorrect');
+        if(this.showHintOnTimeout){
+          if(evt.question.data.hint){
+            this.hint = 'Sorry - time ran out. ' + evt.question.data.hint;
+            this.$.hint.classList.add('active', 'incorrect');
+          }
         }
+
         this.fire('show-hint-quiztimedout', evt);
       },
 
