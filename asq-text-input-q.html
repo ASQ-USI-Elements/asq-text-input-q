@@ -1,6 +1,9 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../asq-base/asq-base.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
 
 
 <!--
@@ -33,10 +36,33 @@ text questions.
         display: block;
       }
 
-      #le-content{
-        @apply(--asq-text-input-q-content);
+
+      #container{
+        @apply(--layout-horizontal);
+      }
+      #correctnessContainer{
+        width: 40px;
+        padding: 0 10px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+      #correctnessContainer.correct{
+        color: var(--paper-green-500);
+      }
+      #correctnessContainer.incorrect{
+        color: var(--paper-red-500);
+      }
+      #correctnessContainer iron-icon{
+        --iron-icon:{
+          width: 36px;
+          height: 36px;
+        };
       }
 
+      #mainContent{
+        @apply(--layout-flex);
+        @apply(--asq-text-input-q-content);
+      }
       #input{
         @apply(--asq-text-input-q-input);
       }
@@ -46,12 +72,28 @@ text questions.
 
     <!-- <content select="asq-stem"></content> -->
     
-    <div id="le-content">
-      <content></content>
-    </div>
-
-    <paper-input id="input" label="{{label}}" floatingLabel="{{floatingLabel}}" 
-          value="{{value}}" disabled="{{disabled}}"></paper-input>
+    <template is="dom-if" if="{{hasRole(role, roles.VIEWER)}}" restamp>
+      <div id="container">
+        <div id='mainContent'>
+          <content></content>
+          <paper-input id="input" label="{{label}}" floatingLabel="{{floatingLabel}}" 
+            value="{{value}}" disabled="{{disabled}}"></paper-input>
+        </div>
+        <div id="correctnessContainer" class$="[[_computeCorrectnessClass(_isCorrect)]]">
+          <iron-icon icon="[[_computeCorrectnessIcon(_isCorrect)]]"></iron-icon>
+        </div>
+      </div>
+    </template>
+    
+    <template is="dom-if" if="{{hasRole(role, roles.PRESENTER)}}" restamp>
+      <div id="container">
+        <div id="mainContent">
+          <content></content>
+          <paper-input id="input" label="{{label}}" floatingLabel="{{floatingLabel}}" 
+                value="{{value}}" disabled="{{disabled}}"></paper-input>
+        </div>
+      </div>
+    </template>
 
   </template>
 </dom-module>
@@ -105,6 +147,10 @@ text questions.
           value: '',
           notify: true,
           reflectToAttribute: true,
+        },
+
+        _isCorrect:{
+          type: Boolean
         }
       },
 
@@ -122,20 +168,56 @@ text questions.
         if(!evt || ! evt.questionType) return;
 
         if(evt.questionType == 'asq-text-input-q'){
-          if(evt.type == "restorePresenter"){
-            if(this.role !== this.roles.PRESENTER) return;
-            this.onRestorePresenter(evt);
-          }
-          else if(evt.type == "restoreViewer"){
-            if(this.role !== this.roles.VIEWER) return;
-            this.onRestoreViewer(evt);
+          switch (evt.type){
+            case 'restoreViewer':
+              if(this.role !== this.roles.VIEWER) return;
+              return this.onRestoreViewer(evt);
+              break;
+            case 'setCorrectness':
+              if(this.role !== this.roles.VIEWER) return;
+              return this._onSetCorrectness(evt);
+              break;
+            case 'restorePresenter':
+              if(this.role !== this.roles.PRESENTER) return;
+              return this.onRestorePresenter(evt);
+              break;
+            case 'setValue':
+              if(this.role !== this.roles.PRESENTER) return;
+              return this._onSetValue(evt);
+              break;
+            case 'clearValue':
+              if(this.role !== this.roles.PRESENTER) return;
+              return this._onClearValue(evt);
+              break;
+            default:
+              break;
           }
         }
       },
 
-      onRestorePresenter: function(evt){
-
+      _onSetCorrectness: function (evt) {
+        if (!evt.question || evt.question.uid !== this.uid)
+          return;
+        this._isCorrect = evt.answer.isCorrect;
       },
+
+      _onSetValue: function (evt) {
+        if (!evt.question || evt.question.uid !== this.uid)
+          return;
+        try{
+          this.value = evt.answer.submission;
+        }catch(err){
+          console.log('could not set value' + evt.answer.submission)
+        }
+      },
+
+      _onClearValue: function (evt) {
+        if (!evt.question || evt.question.uid !== this.uid)
+          return;
+        this.value = '';
+      },
+
+      onRestorePresenter: function(evt){},
 
       onRestoreViewer: function(evt){
         evt.questions.forEach(function(q){
@@ -176,6 +258,23 @@ text questions.
           timestamp: new Date(),
           submission: submission
         };
+      },
+
+      _computeCorrectnessClass: function(isCorrect){
+        if(isCorrect === true){
+          return 'correct';
+        }else if(isCorrect === false){
+          return 'incorrect';
+        }
+        return '';
+      },
+      _computeCorrectnessIcon: function(isCorrect){
+        if(isCorrect === true){
+          return 'icons:check-circle';
+        }else if(isCorrect === false){
+          return 'icons:cancel';
+        }
+        return '';
       }
     
     });

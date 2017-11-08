@@ -160,6 +160,9 @@ Example:
           if(evt.type == "progress"){
             this._onProgress(evt);
           }
+          else if(evt.type == "answerChanged"){
+            this._onAnswerChanged(evt);
+          }
           else if(evt.type == "restorePresenter"){
             this._onRestorePresenter(evt);
           }
@@ -180,13 +183,39 @@ Example:
         this._answers = evt.question.answers;
       },
 
+      _onAnswerChanged: function(evt){
+        if (!evt.question || evt.question.uid !== this.forUid)
+          return;
+
+        // can only handle isCensored
+        if(evt.changeRecord.path !== 'isCensored') return;
+
+        var modifiedAnswer = evt.answer;
+
+        this._answers.forEach(function(answer, index){
+          if(answer.uid === modifiedAnswer.uid){
+            answer.isCensored = modifiedAnswer.isCensored;
+          }
+        })
+
+        this._calcTokenizedSubmissions();
+      },
+
       _answersChanged: function(answers){
         if(!answers && answers.length) return;
-        var l = answers.length;
 
+        this._calcTokenizedSubmissions();
+      },
+
+      _calcTokenizedSubmissions: function(){
+        var l = this._answers.length;
         //token count
         var tokenizedSubmissions = Object.create(null);
-        answers.map(function(answer){
+        this._answers
+        .filter(function(answer){
+          return ! answer.isCensored === true;
+        })
+        .map(function(answer){
           var sub = answer.submission;
           if(typeof sub !== 'string') return;
           tokenizedSubmissions[sub] = tokenizedSubmissions[sub] || {
@@ -194,7 +223,7 @@ Example:
             correct: answer.isSubmissionCorrect
           };
           tokenizedSubmissions[sub].frequency++;
-        })
+        });
 
         this._tokenizedSubmissions = Object.keys(tokenizedSubmissions).map(function(token){
           return {

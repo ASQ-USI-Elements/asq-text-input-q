@@ -85,11 +85,16 @@ Example:
         @apply(--asq-text-input-q-stats-self-submission);
       }
 
+      #self-submission.censored{
+        background: #FFA726;
+        @apply(--asq-text-input-q-stats-self-submission-censored);
+      }
+
     </style>
 
 
     <div id="list-container">
-      <paper-item id="self-submission">
+      <paper-item id="self-submission" class$="[[_calcSelfSubmissionClass(_selfSubmission)]]">
         <paper-item-body two-line style="width:100%">
           <div class="submission-info">
             <div class="submission-user-info">
@@ -193,6 +198,9 @@ Example:
           else if(evt.type == "progress"){
             this._onAllProgress(evt);
           }
+          else if(evt.type == "answerChanged"){
+            this._onAnswerChanged(evt);
+          }
           else if(evt.type == "restoreViewer"){
             this._onRestoreViewer(evt);
           }
@@ -206,7 +214,8 @@ Example:
          if( q.selfAnswer){
           var submission = {
             value: q.selfAnswer.submission,
-            correct: q.selfAnswer.isSubmissionCorrect
+            correct: q.selfAnswer.isSubmissionCorrect,
+            isCensored: q.selfAnswer.isCensored
           }
           this._selfSubmission = submission;
          }
@@ -235,13 +244,39 @@ Example:
         this._answers = evt.question.answers;
       },
 
+      _onAnswerChanged: function(evt){
+        if (!evt.question || evt.question.uid !== this.forUid)
+          return;
+
+        // can only handle isCensored
+        if(evt.changeRecord.path !== 'isCensored') return;
+
+        var modifiedAnswer = evt.answer;
+
+        this._answers.forEach(function(answer, index){
+          if(answer.uid === modifiedAnswer.uid){
+            answer.isCensored = modifiedAnswer.isCensored;
+          }
+        })
+
+        this._calcTokenizedSubmissions();
+      },
+
       _answersChanged: function(answers){
         if(!answers && answers.length) return;
-        var l = answers.length;
 
+        this._calcTokenizedSubmissions();
+      },
+
+      _calcTokenizedSubmissions: function(){
+        var l = this._answers.length;
         //token count
         var tokenizedSubmissions = Object.create(null);
-        answers.map(function(answer){
+        this._answers
+        .filter(function(answer){
+          return ! answer.isCensored === true;
+        })
+        .map(function(answer){
           var sub = answer.submission;
           if(typeof sub !== 'string') return;
           tokenizedSubmissions[sub] = tokenizedSubmissions[sub] || {
@@ -249,7 +284,7 @@ Example:
             correct: answer.isSubmissionCorrect
           };
           tokenizedSubmissions[sub].frequency++;
-        })
+        });
 
         this._tokenizedSubmissions = Object.keys(tokenizedSubmissions).map(function(token){
           return {
@@ -259,6 +294,10 @@ Example:
             percentage: parseFloat(100* tokenizedSubmissions[token].frequency/l)
           }
         })
+      },
+
+      _calcSelfSubmissionClass: function(selfSubmission){
+        return selfSubmission.isCensored ? 'censored' : '';
       },
 
       _eventBusChanged: function (eventBus, old) {
